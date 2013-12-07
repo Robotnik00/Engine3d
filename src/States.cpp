@@ -22,7 +22,7 @@ DebugState::DebugState(Engine* engine)
 
 
 
-	mModel = mManager->Load("model", "model.obj");
+	mModel = mManager->Load("model", "model.3ds");
 	
 	mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 

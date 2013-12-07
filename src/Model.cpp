@@ -75,6 +75,7 @@ Model* ModelManager::Load(const char* name, const char* filename)
 
 
 	const aiScene *scene = mImporter.ReadFile(filename, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
+
 	aiMesh *mesh = scene->mMeshes[0]; 
  	Vertex* vertices = new Vertex[mesh->mNumFaces*3*3];
 	std::cout << mesh->mNumVertices  << ' ' << mesh->mNumFaces << std::endl;
@@ -88,7 +89,6 @@ Model* ModelManager::Load(const char* name, const char* filename)
 		for(int j = 0; j < 3; j++)
 			indices[index++] = face.mIndices[j];
 	}
-
 	float* array = new float[mesh->mNumVertices*3*2];
 	for(int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -110,7 +110,7 @@ Model* ModelManager::Load(const char* name, const char* filename)
 
 	glGenBuffersARB(1, &IBO);
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, index*4, indices, GL_STATIC_DRAW_ARB);
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, index*sizeof(GLshort), indices, GL_STATIC_DRAW_ARB);
 
 	Model* mod = new Model(name, IBO, VBO, index);
 	
