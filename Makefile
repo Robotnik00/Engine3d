@@ -23,4 +23,5 @@ $(OUTPUT)/$(TARGET).o: $(SOURCE)/$(TARGET).cpp $(SRC_DEPENDENCIES)
 	mv *.o $(OUTPUT)/
 
 directories: 
-	mkdir $(OUTPUT)
+	rm -rf $(OUTPUT)
+	mkdir $(OUTPUT) 
