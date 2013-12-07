@@ -110,9 +110,9 @@ Model* ModelManager::Load(const char* name, const char* filename)
 
 	glGenBuffersARB(1, &IBO);
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, mesh->mNumVertices*3*2*4, indices, GL_STATIC_DRAW_ARB);
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, index, indices, GL_STATIC_DRAW_ARB);
 
-	Model* mod = new Model("name", IBO, VBO, index);
+	Model* mod = new Model(name, IBO, VBO, index);
 	
 	mModels.push_back(mod);
 
