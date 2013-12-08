@@ -4,8 +4,8 @@ LFLAGS =  -L/usr/local/lib -L ../SDL/build/ -lSDL2 -ldl -lrt -lpthread -lGL -lGL
 
 TARGET = main
 
-SRC_DEPENDENCIES = $(SOURCE)/Engine.cpp $(SOURCE)/States.cpp $(SOURCE)/Model.cpp 
-OBJ_DEPENDENCIES = $(OUTPUT)/Engine.o $(OUTPUT)/States.o $(OUTPUT)/Model.o 
+SRC_DEPENDENCIES = $(SOURCE)/Engine.cpp $(SOURCE)/States.cpp $(SOURCE)/Model.cpp $(SOURCE)/Shaders.cpp
+OBJ_DEPENDENCIES = $(OUTPUT)/Engine.o $(OUTPUT)/States.o $(OUTPUT)/Model.o $(OUTPUT)/Shaders.o
 
 SOURCE = src
 OUTPUT = bin

@@ -39,6 +39,7 @@ DebugState::DebugState(Engine* engine)
 		mKeysDown[i] = 0;
 
 
+	glUseProgram(mEngine->getProgramID());
 }
 
 DebugState::~DebugState()

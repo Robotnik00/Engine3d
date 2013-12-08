@@ -3,6 +3,13 @@
 #include "SDL.h"
 #include "States.h"
 
+#include "Shaders.h"
+#define GL_GLEXT_PROTOTYPES
+#include "GL/gl.h"
+#include "GL/glu.h"
+#include "GL/glext.h"
+
+
 class State;
 
 // creates a Loop that updates at a constant frequency
@@ -42,8 +49,10 @@ public:
 	
 	bool	isRunning()		{ return mIsRunning;		}
 
+	GLuint getProgramID()		{ return mProgramID;		}
+
 protected:
-	
+	GLuint mProgramID;	
 
 	int   mWidth;		
 	int   mHeight;

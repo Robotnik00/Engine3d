@@ -3,7 +3,7 @@
 
 int main(void)
 {
-	Engine* engine = new Engine(800, 600);
+	Engine* engine = new Engine(500, 500);
 	State* state = new DebugState(engine);
 	engine->ChangeState(state);
 	engine->Start();

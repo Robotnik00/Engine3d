@@ -69,7 +69,7 @@ Engine::Engine(int width, int height)
 	glShaderSourceARB(fragmentShaderObject, 1, (const GLchar**)&FragmentShaderSource, &flength);
 
 	mProgramID = BuildShaders(vertexShaderObject, fragmentShaderObject);
-	glUseProgram(mProgramID);
+	glUserProgram(mProgramID);
 }
 Engine::~Engine()
 {
