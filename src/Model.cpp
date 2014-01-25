@@ -46,20 +46,14 @@ void Model::Draw(glm::mat4* interpolator)
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, mIBO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	
 	glEnableVertexAttribArray(2);
-
-    	//glEnableClientState(GL_NORMAL_ARRAY);
-	//glNormalPointer(GL_FLOAT, SERERATION, (void*)NORMAL_PTR);
-	//glTexCoordPointer(3, GL_FLOAT, SERERATION, (void*)TEX_PTR);
-	GLint loc = glGetUniformLocation(program, "Tex1");
-	glUniform1i(loc, 0);
 	glBindTexture(program, texid);
 	glVertexAttribPointer(0, VERTS_PER_FACE, GL_FLOAT, GL_FALSE, SERERATION, (void *) 0);
 	glVertexAttribPointer(1, VERTS_PER_FACE, GL_FLOAT, GL_FALSE, SERERATION, (void *) NORMAL_PTR);
 	glVertexAttribPointer(2, VERTS_PER_FACE, GL_FLOAT, GL_FALSE, SERERATION, (void *) TEX_PTR);
 	glDrawElements(GL_TRIANGLES, mNumVertices, GL_UNSIGNED_SHORT, (void*)0);
-	//glDisableClientState(GL_NORMAL_ARRAY);
-	//glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	glPopMatrix();
 }
 
@@ -117,7 +111,7 @@ Model* ModelManager::Load(const char* name, const char* filename)
 		array[9*i+4] = mesh->mNormals[i].y;
 		array[9*i+5] = mesh->mNormals[i].z;
 		array[9*i+6] = mesh->mTextureCoords[0][i].x;
-		array[9*i+7] = mesh->mTextureCoords[0][i].y;
+		array[9*i+7] = mesh->mTextureCoords[0][i].y*-1;
 		array[9*i+8] = mesh->mTextureCoords[0][i].z;
 
 	}
@@ -135,13 +129,12 @@ Model* ModelManager::Load(const char* name, const char* filename)
 	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, index*sizeof(GLshort), indices, GL_STATIC_DRAW_ARB);
 
 
-	SDL_Surface* surface = SDL_LoadBMP("science.bmp");
+	SDL_Surface* surface = SDL_LoadBMP("armidillotex.bmp");
 	if(surface == NULL)
 	{
 		std::cout << "error loading texture\n";
 	}
-	
-	glActiveTexture(GL_TEXTURE0);
+
 	glGenTextures(1, &texid);    
 	glBindTexture(GL_TEXTURE_2D,texid);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w,surface->h, 0, GL_RGB,GL_UNSIGNED_BYTE,surface->pixels);
@@ -154,7 +147,7 @@ Model* ModelManager::Load(const char* name, const char* filename)
 	Model* mod = new Model(name, IBO, VBO, index);
 	
 	mModels.push_back(mod);
- 
+
 	return mod;
 }
 

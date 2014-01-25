@@ -32,7 +32,7 @@ Engine::Engine(int width, int height)
 	glViewport(0, 0, (GLsizei)GetWidth(), (GLsizei)GetHeight());
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();
-	gluPerspective(60, (GLfloat)GetWidth() / (GLfloat)GetHeight(), 1.0, 100.0); 
+	gluPerspective(60, (GLfloat)GetWidth() / (GLfloat)GetHeight(), 0.1, 100.0); 
 	glMatrixMode(GL_MODELVIEW);
 	
 	glEnable (GL_DEPTH_TEST);

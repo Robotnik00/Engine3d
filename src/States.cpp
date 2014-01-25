@@ -52,7 +52,7 @@ void DebugState::Update()
 	
 	
 	mCounter++;
-	if(mCounter % 10 == 0)
+	if(mCounter % 25 == 0)
 	{
 		char name[20];
 		sprintf(name, "%.2f", mEngine->GetFPS());
