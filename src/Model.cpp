@@ -154,7 +154,7 @@ Model* ModelManager::Load(const char* name, const char* filename)
 	Model* mod = new Model(name, IBO, VBO, index);
 	
 	mModels.push_back(mod);
-
+ 
 	return mod;
 }
 
