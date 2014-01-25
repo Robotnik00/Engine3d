@@ -49,10 +49,9 @@ public:
 	
 	bool	isRunning()		{ return mIsRunning;		}
 
-	GLuint getProgramID()		{ return mProgramID;		}
+	Shader* GetShader()		{ return mShader;		}
 
 protected:
-	GLuint mProgramID;	
 
 	int   mWidth;		
 	int   mHeight;
@@ -66,6 +65,7 @@ protected:
 	State*		mCurrentState;	// the state the engine is in.
 	SDL_Window*	mWindow;	
 	SDL_Renderer*	mRenderer;
+	Shader* 	mShader;
 
 private:
 

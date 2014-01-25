@@ -15,7 +15,8 @@
 
 // used for indexing IBO and VBO
 #define NORMAL_PTR 12
-#define SERERATION 24
+#define TEX_PTR	   24
+#define SERERATION 36
 
 // triangles
 #define VERTS_PER_FACE 3
@@ -51,12 +52,12 @@ class ModelManager
 {
 public:
 
-	ModelManager();
+	ModelManager(GLuint programID);
 	
 	static Model* Load(const char* modelName, const char* fileName);
 	
 protected:
-	
+	static GLuint mProgramID;
 	static Assimp::Importer mImporter;
 	static std::vector<Model*> mModels;
 };

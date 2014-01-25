@@ -1,8 +1,37 @@
 #include "Shaders.h"
-#include <iostream>
 
-int LoadShader(const char* filename, char** shaderSource)
+#include <iostream>
+#include <fstream>
+#include <ios>
+
+#include "GL/glu.h"
+#include "GL/glext.h"
+
+Shader::Shader(const char* name, const char* vertexShader, const char* fragmentShader)
 {
+	this->name = name;
+	GLchar* VertexShaderSource;
+	GLchar* FragmentShaderSource;
+
+	GLint vlength = LoadShader(vertexShader, &VertexShaderSource);
+	GLint flength = LoadShader(fragmentShader, &FragmentShaderSource);
+
+
+	GLuint vertexShaderObject, fragmentShaderObject;	
+
+
+	vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
+	fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
+
+	glShaderSourceARB(vertexShaderObject, 1, (const GLchar**)&VertexShaderSource, &vlength);
+	glShaderSourceARB(fragmentShaderObject, 1, (const GLchar**)&FragmentShaderSource, &flength);
+
+	mProgramID = BuildProgram(vertexShaderObject, fragmentShaderObject);
+}
+
+GLuint Shader::LoadShader(const char* filename, char** shaderSource)
+{
+
 	std::ifstream file;
 	file.open(filename, std::ios::in);
 	if(!file)
@@ -18,8 +47,6 @@ int LoadShader(const char* filename, char** shaderSource)
 
 	*shaderSource = new char[file_length+1];
 	
-	std::cout << "he\n";		
-	
 	(*shaderSource)[file_length] = 0;
 
 
@@ -32,12 +59,11 @@ int LoadShader(const char* filename, char** shaderSource)
 	
 	file.close();
 
+
 	return file_length+1;
 }
-
-GLuint BuildShaders(GLuint vertexShaderObject, GLuint fragmentShaderObject)
+GLuint Shader::BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObject)
 {
-
 	glCompileShaderARB(vertexShaderObject);
 	glCompileShaderARB(fragmentShaderObject);
 
@@ -71,3 +97,21 @@ GLuint BuildShaders(GLuint vertexShaderObject, GLuint fragmentShaderObject)
 
 	return programID;
 }
+
+
+void Shader::MakeActive()
+{
+	glUseProgram(mProgramID);
+}
+void Shader::Disable()
+{
+	glUseProgram(0);
+}
+
+
+
+
+
+
+
+

@@ -21,7 +21,7 @@
 DebugState::DebugState(Engine* engine)
 	: State(engine)
 {
-	mManager = new ModelManager();
+	mManager = new ModelManager(mEngine->GetShader()->GetProgramID());
 	
 
 
@@ -30,7 +30,7 @@ DebugState::DebugState(Engine* engine)
 
 
 
-	mModel = mManager->Load("model", "model.3ds");
+	mModel = mManager->Load("model", "armadillo.3DS");
 	
 	mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
@@ -52,7 +52,7 @@ void DebugState::Update()
 	
 	
 	mCounter++;
-	if(mCounter % 50 == 0)
+	if(mCounter % 10 == 0)
 	{
 		char name[20];
 		sprintf(name, "%.2f", mEngine->GetFPS());

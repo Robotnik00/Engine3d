@@ -1,6 +1,6 @@
 CC     = g++
 CFLAGS = -I include/ -I ../SDL/include/ -I ../glm/ -I ../assimp/include/ 
-LFLAGS =  -L/usr/local/lib -L ../SDL/build/ -lSDL2 -ldl -lrt -lpthread -lGL -lGLU -lassimp 
+LFLAGS = -L ../SDL/build/ -L ../assimp/lib/ -lSDL2 -ldl -lrt -lpthread -lGL -lGLU -lassimp 
 
 TARGET = main
 

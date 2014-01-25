@@ -1,11 +1,22 @@
-#include <fstream>
-#include <ios>
+#pragma once
 
 #define GL_GLEXT_PROTOTYPES
 #include "GL/gl.h"
-#include "GL/glu.h"
-#include "GL/glext.h"
 
-int LoadShader(const char* fileName, char** shaderSource);
+class Shader
+{
+public:
+	Shader(const char* name, const char* vertexShader, const char* fragmentShader);
+	
+	GLuint 	GetProgramID() { return mProgramID; }
+	void	MakeActive();
+	void	Disable();
+protected:
 
-GLuint BuildShaders(GLuint vertexShader, GLuint fragmentShader);
+	GLuint LoadShader(const char* filename, char** shaderSource);
+
+	GLuint BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObject);
+	
+	const char* name;
+	GLuint mProgramID;
+};

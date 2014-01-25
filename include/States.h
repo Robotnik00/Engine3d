@@ -42,7 +42,6 @@ public:
 	void ProcessEvent(SDL_Event* event);
 	
 protected:
-	GLuint mProgramID;
 
 	long mCounter;
 
