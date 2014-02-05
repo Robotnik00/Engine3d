@@ -28,7 +28,6 @@ Engine::Engine(int width, int height)
 	SDL_Init(SDL_INIT_EVERYTHING);
 	mWindow = SDL_CreateWindow("",  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
 	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
-	
 	glViewport(0, 0, (GLsizei)GetWidth(), (GLsizei)GetHeight());
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();
@@ -41,7 +40,7 @@ Engine::Engine(int width, int height)
 	//glEnable(GL_COLOR_MATERIAL);
 
 	
-	mShader = new Shader("default", "src/VertexShader.cpp", "src/FragmentShader.cpp");
+	mShader = new SimpleShader("default", "src/VertexShader.cpp", "src/FragmentShader.cpp");
 	glUseProgram(mShader->GetProgramID());
 }
 Engine::~Engine()
@@ -95,6 +94,8 @@ void Engine::Loop()
 			first = FPSFilter[(mUpdateFrames) % filterLength];	
 			last = FPSFilter[(mUpdateFrames+1) % filterLength];
 			mFPS += (float)(first - last)/(filterLength-1);
+
+
 			// process all events
 			ProcessEvents();
 

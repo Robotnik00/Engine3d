@@ -1,70 +1,253 @@
 #include "Model.h"
+#include "Shaders.h"
 
 #include <string.h>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "assimp/scene.h"
-#include "assimp/mesh.h"
-#include "assimp/postprocess.h"
 
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-
-GLuint texid = 0;
-GLuint program;
-
-Model::Model(const char* name, GLuint IBO, GLuint VBO, int numVertices)
+FLoat3f::FLoat3f(float x, float y, float z)
 {
-	int length = strlen(name);
-	mModelName = new char[length];
-
-	for(int i = 0; i < length; i++)
-		mModelName[i] = name[i];
-	
-
-	mIBO = IBO;
-	mVBO = VBO;
-
-	mNumVertices = numVertices;
+	mX = x;
+	mY = y;
+	mZ = z;
 }
 
-Model::~Model()
+void* FLoat3f::GetData()
 {
+	float* data = new float[3];
+	data[0] = mX;
+	data[1] = mY;
+	data[2] = mZ;
 	
-	glDeleteBuffersARB(1, &mVBO);
-	delete[] mModelName;
+
+	return (void*)data;
+}
+
+Vertex::Vertex()
+{
+	mAttributes = NULL;
+	mNumAttributes = 0;
+}
+
+void* Vertex::GetData()
+{
+	int size = GetSize();
+
+	char* data = new char[size];
+	int index = 0;
+	for(int i = 0; i < mNumAttributes; i++)
+	{
+		for(int j = 0; j < mAttributes[i]->GetSize(); j++)
+		{
+			data[index++] = ((char*)mAttributes[i]->GetData())[j];
+		}
+	}
+
+	return data;
+}
+
+int Vertex::GetSize()
+{
+	int size = 0;
+	for(int i = 0; i < mNumAttributes; i++)
+	{
+		size += mAttributes[i]->GetSize();
+	}
+	return size;
+}
+
+int Vertex::GetOffset(int index)
+{
+	if(index > mNumAttributes-1)
+	{
+		return -1;
+	}
+
+	int o = 0;
+	for(int i = 0; i < index; i++)
+	{
+		o += mAttributes[i]->GetSize();
+	}
+	return o;
+}
+
+SimpleVertex::SimpleVertex(FLoat3f* coords, FLoat3f* norms, FLoat3f* texcoords)
+{
+	mNumAttributes = 3;
+	mAttributes = new Attribute*[mNumAttributes];
+	mAttributes[0] = coords;
+	mAttributes[1] = norms;
+	mAttributes[2] = texcoords;
+}
+
+VBO::VBO()
+{
+	mVertexThreashold = 0.001;
+	mVboid = -1;
+}
+
+void VBO::AddVertex(Vertex* vert)
+{
+	mData.push_back(vert);
+}
+
+int VBO::GetSize()
+{
+	int size = 0;
+	for(int i = 0; i < mData.size(); i++)
+	{
+		size += mData[i]->GetSize();
+	}
+	return size;
+}
+
+void* VBO::GetData()
+{
+	char* data = new char[GetSize()];
+
+	int index = 0;
+	for(int i = 0; i < mData.size(); i++)
+	{
+		for(int j = 0; j < mData[i]->GetSize(); j++)
+		{
+			data[index++] = ((char*)mData[i]->GetData())[j];
+		}
+	}
+
+
+	return data;
+}
+
+
+void VBO::Load()
+{
+	glGenBuffersARB(1, &mVboid);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVboid);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, GetSize(), GetData(), GL_STATIC_DRAW_ARB);
+
+}
+
+void VBO::UnLoad()
+{
+	glDeleteBuffers(1, &mVboid);
+}
+
+void VBO::Bind()
+{
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVboid);
+
+	for(int i = 0; i < mData[0]->GetNumAttributes(); i++)
+	{
+		glVertexAttribPointer(i, VERTS_PER_FACE, mData[0]->GetAttribute(i)->GetType(), GL_FALSE, mData[0]->GetSize(), (void *) mData[0]->GetOffset(i));
+	}
+}
+void VBO::UnBind()
+{
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+}
+
+IBO::IBO()
+{
+	mIboid = -1;
+}
+void IBO::Load()
+{
+	glGenBuffersARB(1, &mIboid);
+	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, mIboid);
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, GetSize(), GetData(), GL_STATIC_DRAW_ARB);
+}
+
+void IBO::UnLoad()
+{
+	glDeleteBuffers(1, &mIboid);
+}
+
+void IBO::Bind()
+{
+	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, mIboid);
+}
+
+void IBO::UnBind()
+{
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+}
+
+void IBO::AddIndex(GLshort index)
+{
+	mData.push_back(index);
+}
+
+int IBO::GetSize()
+{
+	return mData.size()*sizeof(GLshort);
+}
+
+void* IBO::GetData()
+{
+	return (void*)&mData[0];
+}
+void Texture::Bind()
+{
+	glBindTexture(GL_TEXTURE_2D, mTexid);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+}
+void Texture::Load()
+{
+
+	SDL_Surface* surface = SDL_LoadBMP(mFilename.data());
+	if(surface == NULL)
+	{
+		std::cout << "error loading texture\n";
+	}
+	glGenTextures(1, &mTexid);    
+	glBindTexture(GL_TEXTURE_2D,mTexid);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w,surface->h, 0, GL_RGB,GL_UNSIGNED_BYTE,surface->pixels);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	SDL_FreeSurface(surface);
+
+	std::cout << mFilename << "  " << mTexid << std::endl;
+}
+
+void ModelMesh::Draw(glm::mat4* interpolator)
+{
+	glPushMatrix();
+	glLoadMatrixf(glm::value_ptr(*interpolator));
+	for(int i = 0; i < mAssets.size(); i++)
+	{
+		mAssets[i]->Bind();
+	}
+	mVBO->Bind();
+	mIBO->Bind();
+	glDrawElements(GL_TRIANGLES, mIBO->GetNumVertices(), GL_UNSIGNED_SHORT, (void*)0);
+	glPopMatrix();
 }
 
 
 void Model::Draw(glm::mat4* interpolator)
 {
 	glPushMatrix();
-	glLoadMatrixf(glm::value_ptr(*interpolator));
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVBO);
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, mIBO);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	
-	glEnableVertexAttribArray(2);
-	glBindTexture(program, texid);
-	glVertexAttribPointer(0, VERTS_PER_FACE, GL_FLOAT, GL_FALSE, SERERATION, (void *) 0);
-	glVertexAttribPointer(1, VERTS_PER_FACE, GL_FLOAT, GL_FALSE, SERERATION, (void *) NORMAL_PTR);
-	glVertexAttribPointer(2, VERTS_PER_FACE, GL_FLOAT, GL_FALSE, SERERATION, (void *) TEX_PTR);
-	glDrawElements(GL_TRIANGLES, mNumVertices, GL_UNSIGNED_SHORT, (void*)0);
+	for(int i = 0; i < mMeshes.size(); i++)
+	{
+		mMeshes[i]->Draw(interpolator);
+	}
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	glPopMatrix();
 }
 
-// static member variables
-Assimp::Importer	ModelManager::mImporter;
-std::vector<Model*>	ModelManager::mModels;
-GLuint 			ModelManager::mProgramID;
 
-ModelManager::ModelManager(GLuint programID)
+ModelManager::ModelManager(Shader* shader)
 {
-	mProgramID = programID;
+	mShader = shader;
 }
 
 // what still needs to be done:
@@ -73,81 +256,36 @@ ModelManager::ModelManager(GLuint programID)
 //			a single VBO.
 Model* ModelManager::Load(const char* name, const char* filename)
 {
-	for(int i = 0; i < mModels.size(); i++)
+	if(mMods.find(name) != mMods.end())
 	{
-
-		if(strcmp(mModels[i]->getName(), name) == 0)
-		{
-			return mModels[i];
-		}
-	
+		std::cout << "model already loaded\n";
+		return mMods[std::string(name)];
 	}
-
-
 	
+	Model* mod = new Model(name);
+	
+
+
 	const aiScene *scene = mImporter.ReadFile(filename, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
+	
 
-	aiMesh *mesh = scene->mMeshes[2]; 
- 	Vertex* vertices = new Vertex[mesh->mNumFaces*3*3];
-	std::cout << mesh->mNumVertices  << ' ' << mesh->mNumFaces << std::endl;
-	int index = 0;
-	std::cout << "max num: " << mesh->mNumUVComponents[0]  << std::endl;
-	
-	GLshort* indices = new GLshort[mesh->mNumFaces*3];
-	
-	for(int i = 0; i < mesh->mNumFaces; i++)
+	for(int i = 0; i < scene->mNumMeshes; i++)
 	{
-		aiFace& face = mesh->mFaces[i];			
-		for(int j = 0; j < 3; j++)
-			indices[index++] = face.mIndices[j];
-	}
-	float* array = new float[mesh->mNumVertices*(3+3+3)]; // 3 pos, 3 norm, 3 tex
-	for(int i = 0; i < mesh->mNumVertices; i++)
-	{
-		array[9*i+0] = mesh->mVertices[i].x;
-		array[9*i+1] = mesh->mVertices[i].y;
-		array[9*i+2] = mesh->mVertices[i].z;
-		array[9*i+3] = mesh->mNormals[i].x;
-		array[9*i+4] = mesh->mNormals[i].y;
-		array[9*i+5] = mesh->mNormals[i].z;
-		array[9*i+6] = mesh->mTextureCoords[0][i].x;
-		array[9*i+7] = mesh->mTextureCoords[0][i].y*-1;
-		array[9*i+8] = mesh->mTextureCoords[0][i].z;
 
-	}
+		std::cout << "number of textures: " << scene->mNumTextures << std::endl;
 
-	GLuint VBO = -1;
-	GLuint IBO = -1;	
+
+		ModelMesh* mesh = new ModelMesh(scene->mMeshes[i]);
+
+		mShader->AddMesh(mesh);
+
+		mod->AddMesh(mesh);
+
 	
-
-	glGenBuffersARB(1, &VBO);
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, VBO);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, mesh->mNumVertices*(3+3+3)*4, array, GL_STATIC_DRAW_ARB);
-
-	glGenBuffersARB(1, &IBO);
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, index*sizeof(GLshort), indices, GL_STATIC_DRAW_ARB);
-
-
-	SDL_Surface* surface = SDL_LoadBMP("armidillotex.bmp");
-	if(surface == NULL)
-	{
-		std::cout << "error loading texture\n";
-	}
-
-	glGenTextures(1, &texid);    
-	glBindTexture(GL_TEXTURE_2D,texid);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w,surface->h, 0, GL_RGB,GL_UNSIGNED_BYTE,surface->pixels);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	SDL_FreeSurface(surface);
-		
-	program = mProgramID;
-
-	Model* mod = new Model(name, IBO, VBO, index);
+	}	
 	
-	mModels.push_back(mod);
-
+	mMods.insert(std::pair<std::string, Model*>(mod->GetName(), mod));
+	std::cout << "done\n";
 	return mod;
 }
 

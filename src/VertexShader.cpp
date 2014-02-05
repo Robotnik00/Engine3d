@@ -4,8 +4,8 @@ layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec3 normals;
 layout (location = 2) in vec3 tex;
 
-layout (location = 0) out vec3 N;
-layout (location = 1) out vec3 v;
+layout (location = 0) out vec3 v;
+layout (location = 1) out vec3 N;
 layout (location = 2) out vec3 texcoords;
 
 void main()

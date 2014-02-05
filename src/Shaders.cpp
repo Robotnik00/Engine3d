@@ -7,6 +7,9 @@
 #include "GL/glu.h"
 #include "GL/glext.h"
 
+
+
+
 Shader::Shader(const char* name, const char* vertexShader, const char* fragmentShader)
 {
 	this->name = name;
@@ -108,8 +111,50 @@ void Shader::Disable()
 	glUseProgram(0);
 }
 
+SimpleShader::SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader)
+	: Shader(name, vertexShader, fragmentShader)
+{
+}
 
 
+void SimpleShader::AddMesh(ModelMesh* modelMesh)
+{
+	aiMesh *mesh = modelMesh->GetMesh();
+	std::cout << mesh->mNumVertices  << ' ' << mesh->mNumFaces << std::endl;
+	int index = 0;
+	std::cout << "max num: " << mesh->mNumUVComponents[0]  << std::endl;
+	GLshort* indices = new GLshort[mesh->mNumFaces*3];
+	IBO* ibo = new IBO();
+	for(int i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace& face = mesh->mFaces[i];			
+		for(int j = 0; j < 3; j++)
+		{
+			indices[index++] = face.mIndices[j];
+			ibo->AddIndex(face.mIndices[j]);
+		}
+	}
+
+
+	VBO* vbo = new VBO();
+	for(int i = 0; i < mesh->mNumVertices; i++)
+	{
+		FLoat3f* loc = new FLoat3f(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+		FLoat3f* norm = new FLoat3f(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+		FLoat3f* texcoors = new FLoat3f(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y*-1, mesh->mTextureCoords[0][i].z);
+
+		vbo->AddVertex(new SimpleVertex(loc,norm,texcoors));
+	}
+	
+
+	vbo->Load();
+	ibo->Load();
+
+
+
+	modelMesh->SetVBO(vbo);
+	modelMesh->SetIBO(ibo);
+}
 
 
 

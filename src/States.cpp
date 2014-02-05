@@ -21,16 +21,25 @@
 DebugState::DebugState(Engine* engine)
 	: State(engine)
 {
-	mManager = new ModelManager(mEngine->GetShader()->GetProgramID());
+	mManager = new ModelManager(mEngine->GetShader());
+	
 	
 
 
-
-
-
-
-
 	mModel = mManager->Load("model", "armadillo.3DS");
+	
+	Texture* tex = new Texture("armidillotex.bmp");	
+	tex->Load();	
+
+	Texture* black = new Texture("black.bmp");
+
+	black->Load();
+
+	mModel->GetMesh(0)->AddAsset(black);
+
+	mModel->GetMesh(1)->AddAsset(black);
+
+	mModel->GetMesh(2)->AddAsset(tex);
 	
 	mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
@@ -57,7 +66,7 @@ void DebugState::Update()
 		char name[20];
 		sprintf(name, "%.2f", mEngine->GetFPS());
 		mEngine->SetTitle(name);
-		printf("update callback: %d Hz.	FPS: %.2f Hz.\n", mEngine->GetUpdateFrequency(), mEngine->GetFPS());
+		//printf("update callback: %d Hz.	FPS: %.2f Hz.\n", mEngine->GetUpdateFrequency(), mEngine->GetFPS());
 	}
 	if(mKeysDown['j'])
 	{ 
