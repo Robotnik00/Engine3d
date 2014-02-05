@@ -13,8 +13,8 @@ public:
 	GLuint 	GetProgramID() { return mProgramID; }
 	void	MakeActive();
 	void	Disable();
-	void 	LoadMesh(ModelMesh* mesh);
 	virtual void AddMesh(ModelMesh* modelmesh) = 0;
+	void RemoveMesh(ModelMesh* modelMesh);
 protected:
 
 	GLuint LoadShader(const char* filename, char** shaderSource);
@@ -27,7 +27,7 @@ protected:
 	const char* name;
 	GLuint mProgramID;
 
-	//std::map<std::string, Model* model> mModels;
+	std::map<std::string, ModelMesh*> mMeshes;
 };
 
 class SimpleShader : public Shader

@@ -104,7 +104,7 @@ public:
 	int GetSize();
 	int GetNumVertices() { return mData.size(); }
 
-	GLuint GetVboid() { return mIboid; }
+	GLuint GetIboid() { return mIboid; }
 	
 protected:	
 	std::vector<GLshort> mData;
@@ -138,13 +138,18 @@ protected:
 class ModelMesh
 {
 public: 
-	ModelMesh(aiMesh* mesh) { mMesh = mesh; }
+	ModelMesh(aiMesh* mesh, const std::string name);
 	void Draw(glm::mat4* interpolator);
 
 	void SetVBO(VBO* vbo) { mVBO = vbo; }
 	void SetIBO(IBO* ibo) { mIBO = ibo; }
+	VBO* GetVBO() { return mVBO; }
+	IBO* GetIBO() { return mIBO; }
+
+	void SetShader(Shader* shader);
 
 	void AddAsset(Asset* asset) { mAssets.push_back(asset); }
+	const std::string GetName() { return mName; }
 	
 	aiMesh* GetMesh() { return mMesh; }
 
@@ -156,6 +161,8 @@ protected:
 	std::vector<Asset*> mAssets;
 
 	aiMesh* mMesh;
+	Shader* mShader;
+	const std::string mName;
 };
 
 
@@ -168,7 +175,7 @@ public:
 	void AddMesh(ModelMesh* mesh) { mMeshes.push_back(mesh); }
 	ModelMesh* GetMesh(int i) { return mMeshes[i]; }
 
-	Model* Load(aiScene* scene);
+	Model* Load(Shader* shader);
 
 	const std::string GetName() { return mModelName; }
 			
@@ -181,21 +188,5 @@ protected:
 };
 
 
-
-
-class ModelManager
-{
-public:
-
-	ModelManager(Shader* shader);
-	
-	Model* Load(const char* modelName, const char* fileName);
-	
-protected:
-	Shader* mShader;
-	Assimp::Importer mImporter;
-	std::vector<Model*> mModels;
-	std::map<std::string, Model*> mMods;
-};
 
 

@@ -45,7 +45,8 @@ protected:
 
 	long mCounter;
 
-	Model* mModel;
+	Model* mModel1;
+	Model* mModel2;
 	ModelManager* mManager;
 
 	glm::mat4 mTransform;

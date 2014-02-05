@@ -1,5 +1,4 @@
 #include "Shaders.h"
-
 #include <iostream>
 #include <fstream>
 #include <ios>
@@ -46,8 +45,6 @@ GLuint Shader::LoadShader(const char* filename, char** shaderSource)
 	long file_length = file.tellg();
 	file.seekg(std::ios::beg);
 	
-	std::cout << file_length << std::endl;
-
 	*shaderSource = new char[file_length+1];
 	
 	(*shaderSource)[file_length] = 0;
@@ -71,7 +68,7 @@ GLuint Shader::BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObje
 	glCompileShaderARB(fragmentShaderObject);
 
 
-	GLint compiled;
+	/*GLint compiled;
 
 	glGetObjectParameterivARB(vertexShaderObject, GL_COMPILE_STATUS, &compiled);
 
@@ -84,7 +81,7 @@ GLuint Shader::BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObje
 	if (compiled == GL_TRUE)
 	{
 		std::cout << "fragment shader compiled\n";
-	}
+	}*/
 
 	GLuint programID = glCreateProgram();
 
@@ -92,11 +89,11 @@ GLuint Shader::BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObje
 	glAttachShader(programID, fragmentShaderObject);
 
 	glLinkProgram(programID);
-	glGetObjectParameterivARB(programID, GL_LINK_STATUS, &compiled);
+	/*glGetObjectParameterivARB(programID, GL_LINK_STATUS, &compiled);
 	if (compiled == GL_TRUE)
 	{
 		std::cout << "program linked\n";
-	}
+	}*/
 
 	return programID;
 }
@@ -111,6 +108,11 @@ void Shader::Disable()
 	glUseProgram(0);
 }
 
+void Shader::RemoveMesh(ModelMesh* modelMesh)
+{
+	mMeshes.erase(modelMesh->GetName());
+}
+
 SimpleShader::SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader)
 	: Shader(name, vertexShader, fragmentShader)
 {
@@ -119,12 +121,21 @@ SimpleShader::SimpleShader(const char* name, const char* vertexShader, const cha
 
 void SimpleShader::AddMesh(ModelMesh* modelMesh)
 {
+	if(mMeshes.find(modelMesh->GetName()) != mMeshes.end())
+	{
+		ModelMesh* tmpmesh = mMeshes[modelMesh->GetName()];
+		modelMesh->SetVBO(tmpmesh->GetVBO());
+		modelMesh->SetIBO(tmpmesh->GetIBO());
+		std::cout << modelMesh->GetName() << " mesh loaded\n";
+		return;
+	}
+
 	aiMesh *mesh = modelMesh->GetMesh();
-	std::cout << mesh->mNumVertices  << ' ' << mesh->mNumFaces << std::endl;
-	int index = 0;
-	std::cout << "max num: " << mesh->mNumUVComponents[0]  << std::endl;
-	GLshort* indices = new GLshort[mesh->mNumFaces*3];
+
 	IBO* ibo = new IBO();
+
+	GLshort* indices = new GLshort[mesh->mNumFaces*3];
+	int index = 0;
 	for(int i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace& face = mesh->mFaces[i];			
@@ -154,6 +165,8 @@ void SimpleShader::AddMesh(ModelMesh* modelMesh)
 
 	modelMesh->SetVBO(vbo);
 	modelMesh->SetIBO(ibo);
+	
+	mMeshes.insert(std::pair<std::string, ModelMesh*>(modelMesh->GetName(), modelMesh));
 }
 
 

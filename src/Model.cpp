@@ -4,6 +4,7 @@
 #include <string.h>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
+#include <stdio.h>
 
 
 #include <SDL.h>
@@ -204,20 +205,20 @@ void Texture::Load()
 {
 
 	SDL_Surface* surface = SDL_LoadBMP(mFilename.data());
-	if(surface == NULL)
-	{
-		std::cout << "error loading texture\n";
-	}
 	glGenTextures(1, &mTexid);    
 	glBindTexture(GL_TEXTURE_2D,mTexid);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w,surface->h, 0, GL_RGB,GL_UNSIGNED_BYTE,surface->pixels);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	SDL_FreeSurface(surface);
-
-	std::cout << mFilename << "  " << mTexid << std::endl;
 }
-
+ModelMesh::ModelMesh(aiMesh* mesh, const std::string name)
+	: mName(name)
+{
+	mMesh = mesh; 
+	mVBO = NULL;
+	mIBO = NULL;
+}
 void ModelMesh::Draw(glm::mat4* interpolator)
 {
 	glPushMatrix();
@@ -232,6 +233,21 @@ void ModelMesh::Draw(glm::mat4* interpolator)
 	glPopMatrix();
 }
 
+void ModelMesh::SetShader(Shader* shader)
+{
+	mShader = shader;
+	if(mVBO != NULL)
+	{
+		mVBO->UnLoad();
+	}
+	if(mIBO != NULL)
+	{
+		mIBO->UnLoad();
+	}
+
+	shader->AddMesh(this);
+}
+
 
 void Model::Draw(glm::mat4* interpolator)
 {
@@ -244,52 +260,26 @@ void Model::Draw(glm::mat4* interpolator)
 	glPopMatrix();
 }
 
-
-ModelManager::ModelManager(Shader* shader)
+Model* Model::Load(Shader* shader)
 {
-	mShader = shader;
-}
 
-// what still needs to be done:
-//			right now each model gets its own vertex buffer object,
-//			it would be more efficent to have all IBOs index
-//			a single VBO.
-Model* ModelManager::Load(const char* name, const char* filename)
-{
-	if(mMods.find(name) != mMods.end())
-	{
-		std::cout << "model already loaded\n";
-		return mMods[std::string(name)];
-	}
+	Assimp::Importer importer;
+	const aiScene *scene = importer.ReadFile(mModelName, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
 	
-	Model* mod = new Model(name);
-	
-
-
-	const aiScene *scene = mImporter.ReadFile(filename, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
-	
+	char buffer[50];
 
 	for(int i = 0; i < scene->mNumMeshes; i++)
 	{
+		std::string name = mModelName;
+		sprintf(buffer, "%d", i);
+		name += buffer;
 
-		std::cout << "number of textures: " << scene->mNumTextures << std::endl;
-
-
-		ModelMesh* mesh = new ModelMesh(scene->mMeshes[i]);
-
-		mShader->AddMesh(mesh);
-
-		mod->AddMesh(mesh);
-
+		ModelMesh* mesh = new ModelMesh(scene->mMeshes[i], name);
+		mesh->SetShader(shader);
+		AddMesh(mesh);
+	}
 	
-	}	
-	
-	mMods.insert(std::pair<std::string, Model*>(mod->GetName(), mod));
-	std::cout << "done\n";
-	return mod;
 }
-
-
 
 
 
