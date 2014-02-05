@@ -17,7 +17,6 @@ public:
 	{
 		mEngine = engine;
 	}
-
 	// synchronous callback to Engine
 	virtual void Update() = 0;
 	// asynchronous callback to Engine
@@ -29,6 +28,7 @@ public:
 protected:
 
 	Engine* mEngine;
+	
 };
 
 /// a simple debug state
@@ -47,7 +47,6 @@ protected:
 
 	Model* mModel1;
 	Model* mModel2;
-	ModelManager* mManager;
 
 	glm::mat4 mTransform;
 

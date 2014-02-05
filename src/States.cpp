@@ -37,8 +37,8 @@ DebugState::DebugState(Engine* engine)
 
 	black->Load();
 
-	//mModel1->GetMesh(0)->AddAsset(black);
-	//mModel1->GetMesh(1)->AddAsset(black);
+	mModel1->GetMesh(0)->AddAsset(black);
+	mModel1->GetMesh(1)->AddAsset(black);
 
 	mModel1->GetMesh(2)->AddAsset(tex);
 	
@@ -141,7 +141,7 @@ void DebugState::Draw(float delta)
 	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations  
 	mModel1->Draw(&mTransform);
 	glm::mat4 tmp = glm::translate(mTransform, glm::vec3(0,0,-0.5));
-	//mModel2->Draw(&tmp);
+	mModel2->Draw(&tmp);
 }
 void DebugState::ProcessEvent(SDL_Event* event)
 {		
