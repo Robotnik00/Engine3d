@@ -10,14 +10,14 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-FLoat3f::FLoat3f(float x, float y, float z)
+Float3f::Float3f(float x, float y, float z)
 {
 	mX = x;
 	mY = y;
 	mZ = z;
 }
 
-void* FLoat3f::GetData()
+void* Float3f::GetData()
 {
 	float* data = new float[3];
 	data[0] = mX;
@@ -42,10 +42,12 @@ void* Vertex::GetData()
 	int index = 0;
 	for(int i = 0; i < mNumAttributes; i++)
 	{
+		char* tdata = ((char*)mAttributes[i]->GetData());
 		for(int j = 0; j < mAttributes[i]->GetSize(); j++)
 		{
-			data[index++] = ((char*)mAttributes[i]->GetData())[j];
+			data[index++] = tdata[j];
 		}
+		delete[] tdata;
 	}
 
 	return data;
@@ -76,7 +78,7 @@ int Vertex::GetOffset(int index)
 	return o;
 }
 
-SimpleVertex::SimpleVertex(FLoat3f* coords, FLoat3f* norms, FLoat3f* texcoords)
+SimpleVertex::SimpleVertex(Float3f* coords, Float3f* norms, Float3f* texcoords)
 {
 	mNumAttributes = 3;
 	mAttributes = new Attribute*[mNumAttributes];
@@ -89,6 +91,7 @@ VBO::VBO()
 {
 	mVertexThreashold = 0.001;
 	mVboid = -1;
+	mBound = false;
 }
 
 void VBO::AddVertex(Vertex* vert)
@@ -109,14 +112,15 @@ int VBO::GetSize()
 void* VBO::GetData()
 {
 	char* data = new char[GetSize()];
-
 	int index = 0;
 	for(int i = 0; i < mData.size(); i++)
 	{
+		char* tdata = ((char*)mData[i]->GetData());
 		for(int j = 0; j < mData[i]->GetSize(); j++)
 		{
-			data[index++] = ((char*)mData[i]->GetData())[j];
+			data[index++] = tdata[j];
 		}
+		delete[] tdata;
 	}
 
 
@@ -126,10 +130,11 @@ void* VBO::GetData()
 
 void VBO::Load()
 {
+	char* data = (char*)GetData();
 	glGenBuffersARB(1, &mVboid);
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVboid);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, GetSize(), GetData(), GL_STATIC_DRAW_ARB);
-
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, GetSize(), data, GL_STATIC_DRAW_ARB);
+	delete[] data;
 }
 
 void VBO::UnLoad()
@@ -139,31 +144,33 @@ void VBO::UnLoad()
 
 void VBO::Bind()
 {
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
 
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, mVboid);
 
 	for(int i = 0; i < mData[0]->GetNumAttributes(); i++)
 	{
+		glEnableVertexAttribArray(i);
 		glVertexAttribPointer(i, VERTS_PER_FACE, mData[0]->GetAttribute(i)->GetType(), GL_FALSE, mData[0]->GetSize(), (void *) mData[0]->GetOffset(i));
 	}
 }
 void VBO::UnBind()
 {
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+	mBound = false;
 }
 
 IBO::IBO()
 {
+	mBound = false;
 	mIboid = -1;
 }
 void IBO::Load()
 {
+	char* data = (char*)GetData();
 	glGenBuffersARB(1, &mIboid);
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, mIboid);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, GetSize(), GetData(), GL_STATIC_DRAW_ARB);
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER, GetSize(), data, GL_STATIC_DRAW_ARB);
+	delete[] data;
 }
 
 void IBO::UnLoad()
@@ -263,9 +270,10 @@ void Model::Draw(glm::mat4* interpolator)
 Model* Model::Load(Shader* shader)
 {
 
-	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(mModelName, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
+	Assimp::Importer importer;	
 	
+	const aiScene *scene = importer.ReadFile(mModelName, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
+
 	char buffer[50];
 
 	for(int i = 0; i < scene->mNumMeshes; i++)
@@ -273,12 +281,12 @@ Model* Model::Load(Shader* shader)
 		std::string name = mModelName;
 		sprintf(buffer, "%d", i);
 		name += buffer;
-
+		
 		ModelMesh* mesh = new ModelMesh(scene->mMeshes[i], name);
 		mesh->SetShader(shader);
 		AddMesh(mesh);
+		std::cout << name << " loaded " << "verts: " << mesh->GetVBO()->GetNumVertices() << " indices: " << mesh->GetIBO()->GetNumVertices() << std::endl;
 	}
-	
 }
 
 

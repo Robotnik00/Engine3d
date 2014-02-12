@@ -108,9 +108,9 @@ void Shader::Disable()
 	glUseProgram(0);
 }
 
-void Shader::RemoveMesh(ModelMesh* modelMesh)
+void Shader::RemoveMesh(ModelMesh* mesh)
 {
-	mMeshes.erase(modelMesh->GetName());
+	mMeshes.erase(mesh->GetName());
 }
 
 SimpleShader::SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader)
@@ -150,9 +150,9 @@ void SimpleShader::AddMesh(ModelMesh* modelMesh)
 	VBO* vbo = new VBO();
 	for(int i = 0; i < mesh->mNumVertices; i++)
 	{
-		FLoat3f* loc = new FLoat3f(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
-		FLoat3f* norm = new FLoat3f(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
-		FLoat3f* texcoors = new FLoat3f(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y*-1, mesh->mTextureCoords[0][i].z);
+		Float3f* loc = new Float3f(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+		Float3f* norm = new Float3f(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+		Float3f* texcoors = new Float3f(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y*-1, mesh->mTextureCoords[0][i].z);
 
 		vbo->AddVertex(new SimpleVertex(loc,norm,texcoors));
 	}

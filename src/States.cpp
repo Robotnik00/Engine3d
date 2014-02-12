@@ -27,9 +27,6 @@ DebugState::DebugState(Engine* engine)
 	mModel1 = new Model("armadillo.3DS");
 	mModel1->Load(mEngine->GetShader());
 
-	mModel2 = new Model("armadillo.3DS");
-	mModel2->Load(mEngine->GetShader());
-
 	Texture* tex = new Texture("armidillotex.bmp");	
 	tex->Load();	
 
@@ -39,12 +36,8 @@ DebugState::DebugState(Engine* engine)
 
 	mModel1->GetMesh(0)->AddAsset(black);
 	mModel1->GetMesh(1)->AddAsset(black);
-
 	mModel1->GetMesh(2)->AddAsset(tex);
 	
-	mModel2->GetMesh(0)->AddAsset(black);
-	mModel2->GetMesh(1)->AddAsset(black);
-	mModel2->GetMesh(2)->AddAsset(tex);
 
 	mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
@@ -138,10 +131,7 @@ void DebugState::Draw(float delta)
 	glClearColor(0.208f, 0.9f, 0.8f, 1.0f); // Clear the background of our window to white 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations  
 	mModel1->Draw(&mTransform);
-	glm::mat4 tmp = glm::translate(mTransform, glm::vec3(0,0,-0.5));
-	mModel2->Draw(&tmp);
 }
 void DebugState::ProcessEvent(SDL_Event* event)
 {		

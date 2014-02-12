@@ -75,18 +75,24 @@ void Engine::Loop()
 	float  last			= 0.0f; // last datapoint in filter
 	float* FPSFilter		= new float[filterLength]; // used to average fps
 
+	
 	for(int i = 0; i < filterLength; i++)
 		FPSFilter[i] = 0;
-
 	
+	int max_skip = 0;
 
 	while(mIsRunning)
 	{	
 		mTime = SDL_GetTicks();
-
+		max_skip = 0;
 		// if not done updating in time move to next update without drawing
-		while(mTime - lastUpdate > 1000 / mUpdateFrequency)
+		while(mTime - lastUpdate > 1000 / mUpdateFrequency && max_skip < 5)
 		{
+			max_skip++;
+			lastUpdate += 1000/mUpdateFrequency;
+			// process all events
+			ProcessEvents();
+
 			mUpdateFrames++;
 			
 			// calculate fps
@@ -95,29 +101,21 @@ void Engine::Loop()
 			last = FPSFilter[(mUpdateFrames+1) % filterLength];
 			mFPS += (float)(first - last)/(filterLength-1);
 
-
-			// process all events
-			ProcessEvents();
-
 			// update state
 			if(mCurrentState != NULL)
 			{
 				mCurrentState->Update();
 			}
 
-			lastUpdate = mTime;
 			lastDrawFrameCount = mDrawFrames;
 		}
 
-		
-		
 		// draw state	
 		if(mCurrentState != NULL)
 		{
 			delta = ((float)(SDL_GetTicks() - lastUpdate) * mUpdateFrequency) / 1000.0f;
 			mCurrentState->Draw(delta);
 		}
-		
 		Display();
 		mDrawFrames++;
 	}

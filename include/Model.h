@@ -34,10 +34,10 @@ public:
 	virtual int GetType() = 0; // type of data stored
 };
 
-class FLoat3f : public Attribute
+class Float3f : public Attribute
 {
 public: 
-	FLoat3f(float x, float y, float z);
+	Float3f(float x, float y, float z);
 	void* GetData();
 	int GetSize() { return 3*4; }
 	int GetNumElements() { return 3; }
@@ -63,7 +63,7 @@ protected:
 class SimpleVertex : public Vertex
 {
 public: 
-	SimpleVertex(FLoat3f* coords, FLoat3f* norms, FLoat3f* texcoords);
+	SimpleVertex(Float3f* coords, Float3f* norms, Float3f* texcoords);
 };
 
 class VBO
@@ -86,6 +86,7 @@ protected:
 	std::vector<Vertex*> mData;
 	GLuint mVboid;
 	float mVertexThreashold;
+	bool mBound;
 	
 };
 
@@ -110,6 +111,7 @@ protected:
 	std::vector<GLshort> mData;
 	GLuint mIboid;
 	float mVertexThreashold;
+	bool mBound;
 };
 
 class Asset
