@@ -9,6 +9,6 @@ place all libraries in same dir as Engine3d. for example if Engine3d is in ~/Eng
 
 # build Engine3d
 once all the libraries are installed, build Engine3d.
-cd /path/to/Engine3d/
-make
+tell cmake where to find libraries, run cmake, then make 
+
 
