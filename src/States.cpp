@@ -22,13 +22,13 @@ DebugState::DebugState(Engine* engine)
 	: State(engine)
 {
 	
-    mModel1 = new Model("resources/models/Armadillo/armadillo.3DS");
+    mModel1 = new Model("models/Armadillo/armadillo.3DS");
     mModel1->Load(mEngine->GetShader());
 
-    Texture* tex = new Texture("resources/models/Armadillo/armadillotex.bmp");
+    Texture* tex = new Texture("models/Armadillo/armadillotex.bmp");
 	tex->Load();	
 
-    Texture* black = new Texture("resources/models/Armadillo/black.bmp");
+    Texture* black = new Texture("models/Armadillo/black.bmp");
 
 	black->Load();
 

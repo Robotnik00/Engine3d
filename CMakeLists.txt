@@ -19,3 +19,7 @@ link_directories(${ASSIMP_SRC_DIR}/lib; ${SDL_SRC_DIR}/build)
 add_executable(Engine3d ${sources}) 
 
 target_link_libraries(Engine3d  SDL2 assimp pthread GL GLU dl rt)
+
+add_custom_command(TARGET Engine3d PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:Engine3d>)
