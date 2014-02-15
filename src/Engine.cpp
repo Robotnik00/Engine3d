@@ -40,7 +40,7 @@ Engine::Engine(int width, int height)
 	glEnable (GL_LIGHT0);
     //glEnable(GL_COLOR_MATERIAL);
 	
-    	mShader = new SimpleShader("default", "shaders/VertexShader.txt", "shaders/FragmentShader.txt");
+    	mShader = new SimpleShader("default", "resources/shaders/VertexShader.txt", "resources/shaders/FragmentShader.txt");
 	glUseProgram(mShader->GetProgramID());
 }
 Engine::~Engine()

@@ -12,12 +12,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY CACHE PATH "out dir")
 
 add_subdirectory(src)
 add_subdirectory(include)
+
 include_directories(${Engine3d_SOURCE_DIR}/include; ${ASSIMP_SRC_DIR}/include; ${GLM_SRC_DIR}; ${SDL_SRC_DIR}/include)
 link_directories(${ASSIMP_SRC_DIR}/lib; ${SDL_SRC_DIR}/build)
 
-add_executable(Engine3d ${sources} ${includes}) 
-
+add_executable(Engine3d ${sources}) 
 
 target_link_libraries(Engine3d  SDL2 assimp pthread GL GLU dl rt)
-message(${sources})
-
