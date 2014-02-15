@@ -11,6 +11,7 @@
 //////////////////////////////////////////////////////////////////
 Engine::Engine(int width, int height)
 {
+
 	// protected
 	mWidth			= width;
 	mHeight			= height;
@@ -37,10 +38,9 @@ Engine::Engine(int width, int height)
 	glEnable (GL_DEPTH_TEST);
 	glEnable (GL_LIGHTING);
 	glEnable (GL_LIGHT0);
-	//glEnable(GL_COLOR_MATERIAL);
-
+    //glEnable(GL_COLOR_MATERIAL);
 	
-	mShader = new SimpleShader("default", "src/VertexShader.cpp", "src/FragmentShader.cpp");
+    	mShader = new SimpleShader("default", "shaders/VertexShader.txt", "shaders/FragmentShader.txt");
 	glUseProgram(mShader->GetProgramID());
 }
 Engine::~Engine()
