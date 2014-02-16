@@ -89,7 +89,6 @@ SimpleVertex::SimpleVertex(Float3f* coords, Float3f* norms, Float3f* texcoords)
 
 VBO::VBO()
 {
-	mVertexThreashold = 0.001;
 	mVboid = -1;
 	mBound = false;
 }
@@ -152,6 +151,7 @@ void VBO::Bind()
 		glEnableVertexAttribArray(i);
 		glVertexAttribPointer(i, VERTS_PER_FACE, mData[0]->GetAttribute(i)->GetType(), GL_FALSE, mData[0]->GetSize(), (void *) mData[0]->GetOffset(i));
 	}
+    mBound = true;
 }
 void VBO::UnBind()
 {
@@ -208,6 +208,11 @@ void Texture::Bind()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 }
+void Texture::UnBind()
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Texture::Load()
 {
 
@@ -238,6 +243,11 @@ void ModelMesh::Draw(glm::mat4* interpolator)
 	mIBO->Bind();
 	glDrawElements(GL_TRIANGLES, mIBO->GetNumVertices(), GL_UNSIGNED_SHORT, (void*)0);
 	glPopMatrix();
+
+    for(int i = 0; i < mAssets.size(); i++)
+    {
+        mAssets[i]->UnBind();
+    }
 }
 
 void ModelMesh::SetShader(Shader* shader)
