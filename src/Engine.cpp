@@ -1,4 +1,4 @@
-#include "Engine.h"
+#include <Engine.h>
 
 #include <GL/gl.h>
 
@@ -36,10 +36,6 @@ Engine::Engine(int width, int height)
 	glMatrixMode(GL_MODELVIEW);
 	
 	glEnable (GL_DEPTH_TEST);
-	glEnable (GL_LIGHTING);
-	glEnable (GL_LIGHT0);
-    //glEnable(GL_COLOR_MATERIAL);
-	
     	mShader = new SimpleShader("default", "shaders/VertexShader.txt", "shaders/FragmentShader.txt");
 	glUseProgram(mShader->GetProgramID());
 }

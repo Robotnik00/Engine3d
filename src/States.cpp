@@ -34,7 +34,7 @@ DebugState::DebugState(Engine* engine)
 
     //mModel1->GetMesh(0)->AddAsset(black);
     //mModel1->GetMesh(1)->AddAsset(black);
-    //mModel1->GetMesh(2)->AddAsset(tex);
+    mModel1->GetMesh(2)->AddAsset(tex);
 	
 
 	mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));

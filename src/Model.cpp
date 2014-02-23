@@ -1,5 +1,5 @@
-#include "Model.h"
-#include "Shaders.h"
+#include <Model.h>
+#include <Shaders.h>
 
 #include <string.h>
 #include <iostream>
@@ -12,45 +12,42 @@
 
 Float3f::Float3f(float x, float y, float z)
 {
-	mX = x;
-	mY = y;
-	mZ = z;
+	mData = new float[3];
+	mData[0] = x;
+	mData[1] = y;
+	mData[2] = z;
 }
-
+Float3f::~Float3f()
+{
+	delete[] mData;
+}
 void* Float3f::GetData()
 {
-	float* data = new float[3];
-	data[0] = mX;
-	data[1] = mY;
-	data[2] = mZ;
-	
-
-	return (void*)data;
+	return (void*)mData;
 }
 
 Vertex::Vertex()
 {
 	mAttributes = NULL;
 	mNumAttributes = 0;
+	mData = NULL;
+	mCompiled = false;
+}
+Vertex::~Vertex()
+{
+	delete[] mData;
+	for(int i = 0; i < mNumAttributes; i++)
+	{
+		delete mAttributes[i];
+	}
+	delete[] mAttributes;
 }
 
 void* Vertex::GetData()
 {
-	int size = GetSize();
-
-	char* data = new char[size];
-	int index = 0;
-	for(int i = 0; i < mNumAttributes; i++)
-	{
-		char* tdata = ((char*)mAttributes[i]->GetData());
-		for(int j = 0; j < mAttributes[i]->GetSize(); j++)
-		{
-			data[index++] = tdata[j];
-		}
-		delete[] tdata;
-	}
-
-	return data;
+	if(!mCompiled)
+		Compile();
+	return mData;
 }
 
 int Vertex::GetSize()
@@ -77,6 +74,28 @@ int Vertex::GetOffset(int index)
 	}
 	return o;
 }
+void Vertex::Compile()
+{
+	if(mData != NULL)
+	{
+		delete[] mData;
+	}
+	int index = 0;
+	int size = GetSize();
+	mData = new char[size];
+	for(int i = 0; i < mNumAttributes; i++)
+	{
+		char* tdata = ((char*)mAttributes[i]->GetData());
+		for(int j = 0; j < mAttributes[i]->GetSize(); j++)
+		{
+			mData[index++] = tdata[j];
+		}
+		delete[] tdata;
+	}
+
+	mCompiled = true;
+
+}
 
 SimpleVertex::SimpleVertex(Float3f* coords, Float3f* norms, Float3f* texcoords)
 {
@@ -91,11 +110,22 @@ VBO::VBO()
 {
 	mVboid = -1;
 	mBound = false;
+	mByteData = NULL;
+	mCompiled = false;
+}
+
+VBO::~VBO()
+{
+	for(int i = 0; i < mData.size(); i++)
+	{
+		delete mData[i];
+	}
 }
 
 void VBO::AddVertex(Vertex* vert)
 {
 	mData.push_back(vert);
+	mCompiled = false;
 }
 
 int VBO::GetSize()
@@ -110,20 +140,10 @@ int VBO::GetSize()
 
 void* VBO::GetData()
 {
-	char* data = new char[GetSize()];
-	int index = 0;
-	for(int i = 0; i < mData.size(); i++)
-	{
-		char* tdata = ((char*)mData[i]->GetData());
-		for(int j = 0; j < mData[i]->GetSize(); j++)
-		{
-			data[index++] = tdata[j];
-		}
-		delete[] tdata;
-	}
+	if(mCompiled != true)
+		Compile();
 
-
-	return data;
+	return mByteData;
 }
 
 
@@ -141,6 +161,26 @@ void VBO::UnLoad()
 	glDeleteBuffers(1, &mVboid);
 }
 
+void VBO::Compile()
+{
+	if(mByteData != NULL)
+	{
+		delete[] mByteData;
+	}
+	mByteData = new char[GetSize()];
+	int index = 0;
+	for(int i = 0; i < mData.size(); i++)
+	{
+		char* tdata = ((char*)mData[i]->GetData());
+		for(int j = 0; j < mData[i]->GetSize(); j++)
+		{
+			mByteData[index++] = tdata[j];
+		}
+		delete[] tdata;
+	}
+	mCompiled = true;
+}
+
 void VBO::Bind()
 {
 
@@ -151,7 +191,7 @@ void VBO::Bind()
 		glEnableVertexAttribArray(i);
 		glVertexAttribPointer(i, VERTS_PER_FACE, mData[0]->GetAttribute(i)->GetType(), GL_FALSE, mData[0]->GetSize(), (void *) mData[0]->GetOffset(i));
 	}
-    mBound = true;
+	mBound = true;
 }
 void VBO::UnBind()
 {
@@ -163,6 +203,11 @@ IBO::IBO()
 {
 	mBound = false;
 	mIboid = -1;
+}
+IBO::~IBO()
+{
+
+	UnLoad();
 }
 void IBO::Load()
 {
@@ -202,6 +247,11 @@ void* IBO::GetData()
 {
 	return (void*)&mData[0];
 }
+Texture::~Texture()
+{
+	glDeleteTextures(1, &mTexid);
+}
+
 void Texture::Bind()
 {
 	glBindTexture(GL_TEXTURE_2D, mTexid);
@@ -231,6 +281,15 @@ ModelMesh::ModelMesh(aiMesh* mesh, const std::string name)
 	mVBO = NULL;
 	mIBO = NULL;
 }
+ModelMesh::~ModelMesh()
+{
+	delete mMesh;
+	for(int i = 0; i < mAssets.size(); i++)
+	{
+		delete mAssets[i];
+	}
+}
+
 void ModelMesh::Draw(glm::mat4* interpolator)
 {
 	glPushMatrix();
@@ -252,16 +311,7 @@ void ModelMesh::Draw(glm::mat4* interpolator)
 
 void ModelMesh::SetShader(Shader* shader)
 {
-	mShader = shader;
-	if(mVBO != NULL)
-	{
-		mVBO->UnLoad();
-	}
-	if(mIBO != NULL)
-	{
-		mIBO->UnLoad();
-	}
-
+	mShader = shader;	
 	shader->AddMesh(this);
 }
 
@@ -275,6 +325,13 @@ void Model::Draw(glm::mat4* interpolator)
 	}
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	glPopMatrix();
+}
+Model::~Model()
+{
+	for(int i = 0; i < mMeshes.size(); i++)
+	{
+		delete mMeshes[i];
+	}
 }
 
 Model* Model::Load(Shader* shader)

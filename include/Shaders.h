@@ -1,9 +1,9 @@
 #pragma once
 
 #define GL_GLEXT_PROTOTYPES
-#include "GL/gl.h"
-#include "Model.h"
-
+#include <GL/gl.h>
+#include <Model.h>
+#include <map>
 
 class Shader
 {
