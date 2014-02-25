@@ -13,7 +13,7 @@ int main(void)
 	
     Engine* engine = new Engine(500, 500);
     engine->SetInterval(callback, 1000);
-
+    engine->RemoveInterval(callback);
     State* state = new DebugState(engine);
     engine->ChangeState(state);
     engine->Start();

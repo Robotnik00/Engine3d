@@ -82,11 +82,33 @@ void Engine::ChangeState(State* state)
 	mCurrentState = state;
 }
 
+void Engine::RemoveCallback(Callback* callback)
+{
+	for(int i = 0; i < mCallbacks.size(); i++)
+	{
+		if(mCallbacks[i] == callback)
+		{
+			delete mCallbacks[i];
+			mCallbacks.erase(mCallbacks.begin() + i);
+		}
+	}
+}
+
 void Engine::SetInterval(void (*function)(void), int delay)
 {
 	AddCallback(new Callback(function, delay));
 }
-
+void Engine::RemoveInterval(void (*function)(void))
+{
+	for(int i = 0; i < mCallbacks.size(); i++)
+	{
+		if(mCallbacks[i]->GetCallback() == function)
+		{
+			delete mCallbacks[i];
+			mCallbacks.erase(mCallbacks.begin() + i);
+		}
+	}
+}
 
 
 void Engine::Loop()

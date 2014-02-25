@@ -64,7 +64,10 @@ public:
 	Shader* GetShader()		{ return mShader;		}
 
 	void AddCallback(Callback* callback) { mCallbacks.push_back(callback); }
+	void RemoveCallback(Callback* callback);
 	void SetInterval(void (*function)(void), int delay);
+	void RemoveInterval(void (*function)(void));
+
 protected:
 
 	int   mWidth;		
