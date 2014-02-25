@@ -15,18 +15,18 @@ public:
 	void	Disable();
 	virtual void AddMesh(ModelMesh* modelmesh) = 0;
 	void RemoveMesh(ModelMesh* modelMesh);
+	virtual GLuint BuildProgram() = 0;
+	
 protected:
 
 	GLuint LoadShader(const char* filename, char** shaderSource);
 
-	GLuint BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObject);
-	
 	
 	
 
 	const char* name;
 	GLuint mProgramID;
-
+	GLuint mVertexShaderObject, mFragmentShaderObject;
 	std::map<std::string, ModelMesh*> mMeshes;
 };
 
@@ -35,6 +35,9 @@ class SimpleShader : public Shader
 public:
 	SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader);
 	void AddMesh(ModelMesh* mesh);
+	GLuint BuildProgram();
+	
+protected:
 };
 
 

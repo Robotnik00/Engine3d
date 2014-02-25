@@ -19,16 +19,14 @@ Shader::Shader(const char* name, const char* vertexShader, const char* fragmentS
 	GLint flength = LoadShader(fragmentShader, &FragmentShaderSource);
 
 
-	GLuint vertexShaderObject, fragmentShaderObject;	
 
+	mVertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
+	mFragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
 
-	vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
-	fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSourceARB(mVertexShaderObject, 1, (const GLchar**)&VertexShaderSource, &vlength);
+	glShaderSourceARB(mFragmentShaderObject, 1, (const GLchar**)&FragmentShaderSource, &flength);
 
-	glShaderSourceARB(vertexShaderObject, 1, (const GLchar**)&VertexShaderSource, &vlength);
-	glShaderSourceARB(fragmentShaderObject, 1, (const GLchar**)&FragmentShaderSource, &flength);
-
-	mProgramID = BuildProgram(vertexShaderObject, fragmentShaderObject);
+	
 }
 
 GLuint Shader::LoadShader(const char* filename, char** shaderSource)
@@ -62,10 +60,31 @@ GLuint Shader::LoadShader(const char* filename, char** shaderSource)
 
 	return file_length+1;
 }
-GLuint Shader::BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObject)
+
+void Shader::MakeActive()
 {
-	glCompileShaderARB(vertexShaderObject);
-	glCompileShaderARB(fragmentShaderObject);
+	glUseProgram(mProgramID);
+}
+void Shader::Disable()
+{
+	glUseProgram(0);
+}
+
+void Shader::RemoveMesh(ModelMesh* mesh)
+{
+	mMeshes.erase(mesh->GetName());
+}
+
+SimpleShader::SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader)
+	: Shader(name, vertexShader, fragmentShader)
+{
+	BuildProgram();	
+}
+
+GLuint SimpleShader::BuildProgram()
+{
+	glCompileShaderARB(mVertexShaderObject);
+	glCompileShaderARB(mFragmentShaderObject);
 
 
 	/*GLint compiled;
@@ -85,37 +104,22 @@ GLuint Shader::BuildProgram(GLuint vertexShaderObject, GLuint fragmentShaderObje
 
 	GLuint programID = glCreateProgram();
 
-	glAttachShader(programID, vertexShaderObject);
-	glAttachShader(programID, fragmentShaderObject);
+	glAttachShader(programID, mVertexShaderObject);
+	glAttachShader(programID, mFragmentShaderObject);
 
+	
+
+	glBindAttribLocation(programID, 0, "VertexPosition");
+	glBindAttribLocation(programID, 1, "normals");
+	glBindAttribLocation(programID, 2, "tex");
 	glLinkProgram(programID);
 	/*glGetObjectParameterivARB(programID, GL_LINK_STATUS, &compiled);
 	if (compiled == GL_TRUE)
 	{
 		std::cout << "program linked\n";
 	}*/
-
+	mProgramID = programID;
 	return programID;
-}
-
-
-void Shader::MakeActive()
-{
-	glUseProgram(mProgramID);
-}
-void Shader::Disable()
-{
-	glUseProgram(0);
-}
-
-void Shader::RemoveMesh(ModelMesh* mesh)
-{
-	mMeshes.erase(mesh->GetName());
-}
-
-SimpleShader::SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader)
-	: Shader(name, vertexShader, fragmentShader)
-{
 }
 
 
