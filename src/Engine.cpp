@@ -4,6 +4,27 @@
 
 #include <iostream>
 
+Callback::Callback(void (*callback)(void), int delay)
+{
+	mCallback = callback;
+	mDelay = delay;
+	mLastCall = 0;
+}
+
+void Callback::Schedule(long ticks)
+{
+	if(ticks - mLastCall > mDelay)
+	{
+		mCallback();
+		mLastCall = ticks;
+	}
+}
+
+callbackptr Callback::GetCallback()
+{
+	return mCallback;
+}
+
 
 //////////////////////////////////////////////////////////////////
 /// Methods for Engine:
@@ -24,7 +45,7 @@ Engine::Engine(int width, int height)
 	// private
 	mUpdateFrames		= 0;
 	mDrawFrames		= 0;
-
+	mTicks 			= 0;
 	// initialize video
 	SDL_Init(SDL_INIT_EVERYTHING);
 	mWindow = SDL_CreateWindow("",  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
@@ -60,6 +81,13 @@ void Engine::ChangeState(State* state)
 	}
 	mCurrentState = state;
 }
+
+void Engine::SetInterval(void (*function)(void), int delay)
+{
+	AddCallback(new Callback(function, delay));
+}
+
+
 
 void Engine::Loop()
 {
@@ -106,6 +134,10 @@ void Engine::Loop()
 			lastDrawFrameCount = mDrawFrames;
 		}
 
+		for(int i = 0; i < mCallbacks.size(); i++)
+		{
+			mCallbacks[i]->Schedule(SDL_GetTicks());
+		}
 		// draw state	
 		if(mCurrentState != NULL)
 		{
@@ -114,6 +146,7 @@ void Engine::Loop()
 		}
 		Display();
 		mDrawFrames++;
+		mTicks++;
 	}
 	delete FPSFilter;
 }

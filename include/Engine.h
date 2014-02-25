@@ -10,8 +10,20 @@
 #include "GL/glext.h"
 
 
-class State;
+typedef void (*callbackptr)();
 
+class State;
+class Callback
+{
+public:
+	Callback(void (*callback)(void), int delay); 
+	void Schedule(long ticks);
+	callbackptr GetCallback();
+protected:
+	void (*mCallback)(void) ;
+	long mDelay;
+	long mLastCall;
+};
 // creates a Loop that updates at a constant frequency
 class Engine
 {
@@ -51,6 +63,8 @@ public:
 
 	Shader* GetShader()		{ return mShader;		}
 
+	void AddCallback(Callback* callback) { mCallbacks.push_back(callback); }
+	void SetInterval(void (*function)(void), int delay);
 protected:
 
 	int   mWidth;		
@@ -66,12 +80,13 @@ protected:
 	SDL_Window*	mWindow;	
 	SDL_Renderer*	mRenderer;
 	Shader* 	mShader;
-
+	std::vector<Callback*> mCallbacks;
 private:
 
 	long   mUpdateFrames;		// total number of updates
 	long   mDrawFrames;		// total number of draws
 			
+	long   mTicks;
 
 	SDL_Event mEvent;
 
