@@ -1,97 +1,98 @@
 #pragma once
 
-#include "SDL.h"
-#include "States.h"
+#include <SDL2/SDL.h>
 
-#include "Shaders.h"
 #define GL_GLEXT_PROTOTYPES
-#include "GL/gl.h"
-#include "GL/glu.h"
-#include "GL/glext.h"
+
+#include <States.h>
+#include <Shaders.h>
 
 
-typedef void (*callbackptr)();
-
-class State;
-class Callback
+namespace Engine3d
 {
-public:
-	Callback(void (*callback)(void), int delay); 
-	void Schedule(long ticks);
-	callbackptr GetCallback();
-protected:
-	void (*mCallback)(void) ;
-	long mDelay;
-	long mLastCall;
-};
-// creates a Loop that updates at a constant frequency
-class Engine
-{
+    typedef void (*callbackptr)();
 
-public:
+    class State;
+    class Callback
+    {
+    public:
+        Callback(void (*callback)(void), int delay);
+        void Schedule(long ticks);
+        callbackptr GetCallback();
+    protected:
+        void (*mCallback)(void) ;
+        long mDelay;
+        long mLastCall;
+    };
+    // creates a Loop that updates at a constant frequency
+    class Engine
+    {
 
-	Engine(int width, int height);
-	~Engine();	
+    public:
 
-	// starts the game engine	
-	void Start();
+        Engine(int width, int height);
+        ~Engine();
 
-	// change to a new state
-	void ChangeState(State* state);	
+        // starts the game engine
+        void Start();
 
-	// callback from Renderer
-	void Loop();
-	
-	// draws window
-	void Display();
-	
-	// process key events
-	void ProcessEvents();
+        // change to a new state
+        void ChangeState(State* state);
 
-	void	SetTitle(const char* name);
-	void	SetUpdateFrequency(int updateFrequency);
+        // callback from Renderer
+        void Loop();
 
-	int	GetWidth()		{ return mWidth;		}
-	int	GetHeight()		{ return mHeight;		}	
-	long	GetUpdateFrequency()	{ return mUpdateFrequency;	}
-	float	GetFPS()		{ return mFPS;			}	
-	long	GetTime()		{ return mTime;			}
-	
-	SDL_Renderer* GetRenderer()	{ return mRenderer;		}
-	
-	bool	isRunning()		{ return mIsRunning;		}
+        // draws window
+        void Display();
 
-	Shader* GetShader()		{ return mShader;		}
+        // process key events
+        void ProcessEvents();
 
-	void AddCallback(Callback* callback) { mCallbacks.push_back(callback); }
-	void RemoveCallback(Callback* callback);
-	void SetInterval(void (*function)(void), int delay);
-	void RemoveInterval(void (*function)(void));
+        void	SetTitle(const char* name);
+        void	SetUpdateFrequency(int updateFrequency);
 
-protected:
+        int	GetWidth()		{ return mWidth;		}
+        int	GetHeight()		{ return mHeight;		}
+        long	GetUpdateFrequency()	{ return mUpdateFrequency;	}
+        float	GetFPS()		{ return mFPS;			}
+        long	GetTime()		{ return mTime;			}
 
-	int   mWidth;		
-	int   mHeight;
+        SDL_Renderer* GetRenderer()	{ return mRenderer;		}
 
-	long  mTime;			// time an update started
-	float mFPS;			// drawing frequency
-	int   mUpdateFrequency;		// frequency of update callback. must be less than 1000.  
-	
-	bool  mIsRunning;
-	
-	State*		mCurrentState;	// the state the engine is in.
-	SDL_Window*	mWindow;	
-	SDL_Renderer*	mRenderer;
-	Shader* 	mShader;
-	std::vector<Callback*> mCallbacks;
-private:
+        bool	isRunning()		{ return mIsRunning;		}
 
-	long   mUpdateFrames;		// total number of updates
-	long   mDrawFrames;		// total number of draws
-			
-	long   mTicks;
+        Shader* GetShader()		{ return mShader;		}
 
-	SDL_Event mEvent;
+        void AddCallback(Callback* callback) { mCallbacks.push_back(callback); }
+        void RemoveCallback(Callback* callback);
+        void SetInterval(void (*function)(void), int delay);
+        void RemoveInterval(void (*function)(void));
 
-};
+    protected:
 
+        int   mWidth;
+        int   mHeight;
+
+        long  mTime;			// time an update started
+        float mFPS;			// drawing frequency
+        int   mUpdateFrequency;		// frequency of update callback. must be less than 1000.
+
+        bool  mIsRunning;
+
+        State*		mCurrentState;	// the state the engine is in.
+        SDL_Window*	mWindow;
+        SDL_Renderer*	mRenderer;
+        Shader* 	mShader;
+        std::vector<Callback*> mCallbacks;
+    private:
+
+        long   mUpdateFrames;		// total number of updates
+        long   mDrawFrames;		// total number of draws
+
+        long   mTicks;
+
+        SDL_Event mEvent;
+
+    };
+
+}

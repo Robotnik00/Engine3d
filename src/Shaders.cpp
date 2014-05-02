@@ -1,13 +1,11 @@
-#include "Shaders.h"
+#include <Shaders.h>
 #include <iostream>
 #include <fstream>
 #include <ios>
 
-#include "GL/glu.h"
-#include "GL/glext.h"
 
 
-
+using namespace Engine3d;
 
 Shader::Shader(const char* name, const char* vertexShader, const char* fragmentShader)
 {
@@ -134,43 +132,31 @@ void SimpleShader::AddMesh(ModelMesh* modelMesh)
 		return;
 	}
 
-	aiMesh *mesh = modelMesh->GetMesh();
 
-	IBO* ibo = new IBO();
+    VBO* vbo = new VBO();
+    std::vector<Vertex*> verts = modelMesh->GetVertices();
+    for(int i = 0; i < verts.size(); i++)
+    {
+        vbo->AddVertex(verts[i]);
+    }
 
-	GLshort* indices = new GLshort[mesh->mNumFaces*3];
-	int index = 0;
-	for(int i = 0; i < mesh->mNumFaces; i++)
-	{
-		aiFace& face = mesh->mFaces[i];			
-		for(int j = 0; j < 3; j++)
-		{
-			indices[index++] = face.mIndices[j];
-			ibo->AddIndex(face.mIndices[j]);
-		}
-	}
+    IBO* ibo = new IBO();
+    std::vector<unsigned int> indices = modelMesh->GetIndices();
+    for(int i = 0; i < indices.size(); i++)
+    {
+        ibo->AddIndex(indices[i]);
+    }
 
-
-	VBO* vbo = new VBO();
-	for(int i = 0; i < mesh->mNumVertices; i++)
-	{
-		Float3f* loc = new Float3f(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
-		Float3f* norm = new Float3f(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
-		Float3f* texcoors = new Float3f(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y*-1, mesh->mTextureCoords[0][i].z);
-
-		vbo->AddVertex(new SimpleVertex(loc,norm,texcoors));
-	}
-	
-
-	vbo->Load();
-	ibo->Load();
-
+    vbo->Load();
+    ibo->Load();
 
 
 	modelMesh->SetVBO(vbo);
 	modelMesh->SetIBO(ibo);
 	
 	mMeshes.insert(std::pair<std::string, ModelMesh*>(modelMesh->GetName(), modelMesh));
+
+
 }
 
 

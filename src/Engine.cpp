@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+using namespace Engine3d;
+
 Callback::Callback(void (*callback)(void), int delay)
 {
 	mCallback = callback;

@@ -10,6 +10,8 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+using namespace Engine3d;
+
 Float3f::Float3f(float x, float y, float z)
 {
 	mData = new float[3];
@@ -90,7 +92,7 @@ void Vertex::Compile()
 		{
 			mData[index++] = tdata[j];
 		}
-		delete[] tdata;
+        //delete[] tdata;
 	}
 
 	mCompiled = true;
@@ -274,20 +276,23 @@ void Texture::Load()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	SDL_FreeSurface(surface);
 }
-ModelMesh::ModelMesh(aiMesh* mesh, const std::string name)
+ModelMesh::ModelMesh(const std::string name)
 	: mName(name)
 {
-	mMesh = mesh; 
 	mVBO = NULL;
 	mIBO = NULL;
 }
+
 ModelMesh::~ModelMesh()
 {
-	delete mMesh;
 	for(int i = 0; i < mAssets.size(); i++)
 	{
 		delete mAssets[i];
 	}
+    for(int i = 0; i < mVertices.size(); i++)
+    {
+        delete mVertices[i];
+    }
 }
 
 void ModelMesh::Draw(glm::mat4* interpolator)
@@ -331,28 +336,6 @@ Model::~Model()
 	for(int i = 0; i < mMeshes.size(); i++)
 	{
 		delete mMeshes[i];
-	}
-}
-
-Model* Model::Load(Shader* shader)
-{
-
-	Assimp::Importer importer;	
-	
-	const aiScene *scene = importer.ReadFile(mModelName, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
-
-	char buffer[50];
-
-	for(int i = 0; i < scene->mNumMeshes; i++)
-	{
-		std::string name = mModelName;
-		sprintf(buffer, "%d", i);
-		name += buffer;
-		
-		ModelMesh* mesh = new ModelMesh(scene->mMeshes[i], name);
-		mesh->SetShader(shader);
-		AddMesh(mesh);
-		std::cout << name << " loaded " << "verts: " << mesh->GetVBO()->GetNumVertices() << " indices: " << mesh->GetIBO()->GetNumVertices() << std::endl;
 	}
 }
 
