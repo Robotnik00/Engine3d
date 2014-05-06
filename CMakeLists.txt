@@ -19,7 +19,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
 
 add_library(Engine3d SHARED ${sourcecode}) 
 
-target_link_libraries(Engine3d  SDL2-2.0 assimp pthread GL GLU dl rt)
+target_link_libraries(Engine3d  SDL2 assimp pthread GL GLU dl rt)
 
 add_subdirectory(example)
 

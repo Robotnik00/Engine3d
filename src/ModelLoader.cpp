@@ -6,7 +6,7 @@
 #include <assimp/mesh.h>
 #include <assimp/postprocess.h>
 
-#include <stdlib.h>
+#include <stdio.h>
 
 using namespace Engine3d;
 using namespace Assimp;
