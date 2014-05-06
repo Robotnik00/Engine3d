@@ -112,7 +112,7 @@ VBO::VBO()
 	mVboid = -1;
 	mBound = false;
 	mByteData = NULL;
-	mCompiled = false;
+    mCompiled = false;
 }
 
 VBO::~VBO()
@@ -125,8 +125,8 @@ VBO::~VBO()
 
 void VBO::AddVertex(Vertex* vert)
 {
-	mData.push_back(vert);
-	mCompiled = false;
+    mData.push_back(vert);
+    mCompiled = false;
 }
 
 int VBO::GetSize()
@@ -275,14 +275,14 @@ void Texture::Load()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	SDL_FreeSurface(surface);
 }
-ModelMesh::ModelMesh(const std::string name)
+ModelMeshBase::ModelMeshBase(const std::string name)
 	: mName(name)
 {
 	mVBO = NULL;
 	mIBO = NULL;
 }
 
-ModelMesh::~ModelMesh()
+ModelMeshBase::~ModelMeshBase()
 {
 	for(int i = 0; i < mAssets.size(); i++)
 	{
@@ -294,7 +294,7 @@ ModelMesh::~ModelMesh()
     }
 }
 
-void ModelMesh::Draw(glm::mat4* interpolator)
+void ModelMeshBase::Draw(glm::mat4* interpolator)
 {
 	glPushMatrix();
 	glLoadMatrixf(glm::value_ptr(*interpolator));
@@ -313,7 +313,7 @@ void ModelMesh::Draw(glm::mat4* interpolator)
     }
 }
 
-void ModelMesh::SetShader(Shader* shader)
+void ModelMeshBase::SetShader(Shader* shader)
 {
 	mShader = shader;	
 	shader->AddMesh(this);

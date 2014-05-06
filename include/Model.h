@@ -187,11 +187,11 @@ namespace Engine3d
     // meshes are encaspulated by models. a model contains an array of meshes.
     // each mesh contains a set of vertices, an a list of assets used for drawing.
     // each mesh is then added to a shader.
-    class ModelMesh
+    class ModelMeshBase
     {
     public:
-        ModelMesh(const std::string name);
-        ~ModelMesh();
+        ModelMeshBase(const std::string name);
+        ~ModelMeshBase();
         void Draw(glm::mat4* interpolator);
 
         void SetVBO(VBO* vbo) { mVBO = vbo; }
@@ -205,8 +205,6 @@ namespace Engine3d
         const std::string GetName() { return mName; }
 
 
-        void AddVertex(Vertex* vert) { mVertices.push_back(vert); }
-        void AddIndex(unsigned int ind) { mIndices.push_back(ind); }
         std::vector<Vertex*> GetVertices() { return mVertices; }
         std::vector<unsigned int> GetIndices() { return mIndices; }
 
@@ -226,6 +224,16 @@ namespace Engine3d
                         // Ex. for file meodlname.3DS mesh name = modelname.3DS0
     };
 
+    template <class T> class ModelMesh : public ModelMeshBase
+    {
+    public:
+        ModelMesh(const std::string name) : ModelMeshBase(name) {}
+
+        void AddVertex(T* vert) { mVertices.push_back(vert); }
+        void AddIndex(unsigned int ind) { mIndices.push_back(ind); }
+
+    };
+
 
     // loads a 3d model from a file and stores it into a list of
     // meshes.  Each mesh is given a default shader.
@@ -235,15 +243,15 @@ namespace Engine3d
         Model(const char* name) { mModelName = name; }
         ~Model();
         void Draw(glm::mat4* interpolator);
-        void AddMesh(ModelMesh* mesh) { mMeshes.push_back(mesh); }
-        ModelMesh* GetMesh(int i) { return mMeshes[i]; }
+        void AddMesh(ModelMeshBase* mesh) { mMeshes.push_back(mesh); }
+        ModelMeshBase* GetMesh(int i) { return mMeshes[i]; }
 
         const std::string GetName() { return mModelName; }
 
     protected:
         std::string  mModelName;
 
-        std::vector<ModelMesh*> mMeshes; // list of meshes. each one gets its own assets and shader type.
+        std::vector<ModelMeshBase*> mMeshes; // list of meshes. each one gets its own assets and shader type.
 
     };
 

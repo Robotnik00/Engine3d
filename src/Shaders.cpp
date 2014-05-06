@@ -68,7 +68,7 @@ void Shader::Disable()
 	glUseProgram(0);
 }
 
-void Shader::RemoveMesh(ModelMesh* mesh)
+void Shader::RemoveMesh(ModelMeshBase* mesh)
 {
 	mMeshes.erase(mesh->GetName());
 }
@@ -121,11 +121,11 @@ GLuint SimpleShader::BuildProgram()
 }
 
 
-void SimpleShader::AddMesh(ModelMesh* modelMesh)
+void SimpleShader::AddMesh(ModelMeshBase* modelMesh)
 {
 	if(mMeshes.find(modelMesh->GetName()) != mMeshes.end())
 	{
-		ModelMesh* tmpmesh = mMeshes[modelMesh->GetName()];
+        ModelMeshBase* tmpmesh = mMeshes[modelMesh->GetName()];
 		modelMesh->SetVBO(tmpmesh->GetVBO());
 		modelMesh->SetIBO(tmpmesh->GetIBO());
 		std::cout << modelMesh->GetName() << " mesh loaded\n";
@@ -153,8 +153,8 @@ void SimpleShader::AddMesh(ModelMesh* modelMesh)
 
 	modelMesh->SetVBO(vbo);
 	modelMesh->SetIBO(ibo);
-	
-	mMeshes.insert(std::pair<std::string, ModelMesh*>(modelMesh->GetName(), modelMesh));
+
+    mMeshes[modelMesh->GetName()] = modelMesh;
 
 
 }

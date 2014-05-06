@@ -26,20 +26,17 @@ DebugState::DebugState(Engine* engine)
     : State(engine)
 {
     mModel1 = ModelLoader::Load("models/Armadillo/armadillo.3DS", mEngine->GetShader());
-    std::cout << "hey\n";
+    mModel2 = ModelLoader::Load("models/Armadillo/armadillo.3DS", mEngine->GetShader());
     std::cout.flush();
 
     Texture* tex = new Texture("models/Armadillo/armadillotex.bmp");
     tex->Load();
 
     Texture* black = new Texture("models/Armadillo/black.bmp");
-
     black->Load();
 
-    //mModel1->GetMesh(0)->AddAsset(black);
-    //mModel1->GetMesh(1)->AddAsset(black);
     mModel1->GetMesh(2)->AddAsset(tex);
-
+    mModel2->GetMesh(2)->AddAsset(tex);
 
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
@@ -135,6 +132,8 @@ void DebugState::Draw(float delta)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mModel1->Draw(&mTransform);
+    glm::mat4 tmp = glm::translate(mTransform, glm::vec3(0,0,-0.5f));
+    mModel2->Draw(&tmp);
 }
 void DebugState::ProcessEvent(SDL_Event* event)
 {

@@ -8,6 +8,6 @@ namespace Engine3d
     class ModelLoader
     {
     public:
-        static Model* Load(std::string filename, Shader* shader);
+        static Model* Load(const std::string filename, Shader* shader);
     };
 }

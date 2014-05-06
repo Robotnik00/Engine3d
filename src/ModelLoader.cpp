@@ -6,12 +6,13 @@
 #include <assimp/mesh.h>
 #include <assimp/postprocess.h>
 
+#include <stdlib.h>
 
 using namespace Engine3d;
 using namespace Assimp;
 
 
-Model* ModelLoader::Load(std::string filename, Shader* shader)
+Model* ModelLoader::Load(const std::string filename, Shader* shader)
 {
     Model* m = new Model(filename.data());
     Importer importer;
@@ -20,9 +21,11 @@ Model* ModelLoader::Load(std::string filename, Shader* shader)
 
     for(int i = 0; i < scene->mNumMeshes; i++)
     {
-        std::string name = filename;
-        name += i;
-        ModelMesh* mesh = new ModelMesh(name);
+        std::string name = filename.data();
+        char number[10];
+        sprintf(number, "%d", i);
+        name += number;
+        ModelMesh<SimpleVertex>* mesh = new ModelMesh<SimpleVertex>(name);
 
         aiMesh* aimesh = scene->mMeshes[i];
         for(int j = 0; j < aimesh->mNumFaces; j++)

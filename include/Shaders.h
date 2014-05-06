@@ -14,8 +14,8 @@ namespace Engine3d
         GLuint 	GetProgramID() { return mProgramID; }
         void	MakeActive();
         void	Disable();
-        virtual void AddMesh(ModelMesh* modelmesh) = 0;
-        void RemoveMesh(ModelMesh* modelMesh);
+        virtual void AddMesh(ModelMeshBase* modelmesh) = 0;
+        void RemoveMesh(ModelMeshBase* modelMesh);
         virtual GLuint BuildProgram() = 0;
 
     protected:
@@ -28,14 +28,14 @@ namespace Engine3d
         const char* name;
         GLuint mProgramID;
         GLuint mVertexShaderObject, mFragmentShaderObject;
-        std::map<std::string, ModelMesh*> mMeshes;
+        std::map<std::string, ModelMeshBase*> mMeshes;
     };
 
     class SimpleShader : public Shader
     {
     public:
         SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader);
-        void AddMesh(ModelMesh* mesh);
+        void AddMesh(ModelMeshBase* mesh);
         GLuint BuildProgram();
 
     protected:
