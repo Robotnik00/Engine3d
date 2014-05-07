@@ -184,6 +184,17 @@ namespace Engine3d
         GLuint mTexid;
     };
 
+    class Uniform4f : public Asset
+    {
+    public:
+        Uniform4f(std::string uniname, GLuint programid);
+        void SetVal(float x, float y, float z, float w);
+        virtual void Bind();
+        virtual void UnBind();
+        GLuint mUniId;
+        float mx,my,mz,mw;
+    };
+
     // meshes are encaspulated by models. a model contains an array of meshes.
     // each mesh contains a set of vertices, an a list of assets used for drawing.
     // each mesh is then added to a shader.

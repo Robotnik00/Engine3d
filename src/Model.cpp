@@ -275,6 +275,23 @@ void Texture::Load()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	SDL_FreeSurface(surface);
 }
+Uniform4f::Uniform4f(std::string uniname, GLuint programid)
+{
+    mUniId = glGetUniformLocation(programid, uniname.data());
+}
+void Uniform4f::SetVal(float x, float y, float z, float w)
+{
+    mx = x, my =y, mz = z, mw=w;
+}
+void Uniform4f::Bind()
+{
+    glUniform4f(mUniId, mx, my, mz, mw);
+}
+void Uniform4f::UnBind()
+{
+    glUniform4f(mUniId, 0, 0, 0, 0);
+}
+
 ModelMeshBase::ModelMeshBase(const std::string name)
 	: mName(name)
 {
@@ -311,6 +328,8 @@ void ModelMeshBase::Draw(glm::mat4* interpolator)
     {
         mAssets[i]->UnBind();
     }
+    mVBO->UnBind();
+    mIBO->UnBind();
 }
 
 void ModelMeshBase::SetShader(Shader* shader)

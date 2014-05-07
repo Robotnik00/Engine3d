@@ -15,6 +15,7 @@
 #include "GL/glext.h"
 
 #include <ModelLoader.h>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace Engine3d;
 
@@ -37,6 +38,20 @@ DebugState::DebugState(Engine* engine)
 
     mModel1->GetMesh(2)->AddAsset(tex);
     mModel2->GetMesh(2)->AddAsset(tex);
+
+    Uniform4f* light = new Uniform4f("light", engine->GetShader()->GetProgramID());
+    light->SetVal(10,0,0,0);
+
+    Uniform4f* color1 = new Uniform4f("color", engine->GetShader()->GetProgramID());
+    color1->SetVal(.5,0,0,0);
+    Uniform4f* color2 = new Uniform4f("color", engine->GetShader()->GetProgramID());
+    color2->SetVal(0,.5,0,0);
+
+    mModel1->GetMesh(2)->AddAsset(light);
+    mModel2->GetMesh(2)->AddAsset(light);
+
+    //mModel1->GetMesh(2)->AddAsset(color1);
+    //mModel2->GetMesh(2)->AddAsset(color2);
 
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
@@ -131,9 +146,12 @@ void DebugState::Draw(float delta)
     glClearColor(0.208f, 0.9f, 0.8f, 1.0f); // Clear the background of our window to white
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    GLint myUniformLocation = glGetUniformLocation(mEngine->GetShader()->GetProgramID(), "light");
+    glUniform4f(myUniformLocation, 5, 0, 0, .5);
+
     mModel1->Draw(&mTransform);
     glm::mat4 tmp = glm::translate(mTransform, glm::vec3(0,0,-0.5f));
-    mModel2->Draw(&tmp);
+    //mModel2->Draw(&tmp);
 }
 void DebugState::ProcessEvent(SDL_Event* event)
 {

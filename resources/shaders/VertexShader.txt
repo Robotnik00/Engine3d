@@ -5,12 +5,17 @@ in vec3 normals;
 in vec3 tex;
 
 out vec3 v;
-out vec3 N;
+out vec4 N;
 out vec3 texcoords;
 
 void main()
 {
-	N = normals;
+	mat4 transform = gl_ModelViewMatrix;
+	transform[3][0] = 0;
+	transform[3][1] = 0;
+	transform[3][2] = 0;
+	
+	N = normalize(transform * vec4(normals,1.0));
 	v = VertexPosition;
 	texcoords = tex;
 
