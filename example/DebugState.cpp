@@ -41,7 +41,7 @@ DebugState::DebugState(Engine* engine)
     mModel2->GetMesh(2)->AddAsset(tex);
 
     Uniform4f* light = new Uniform4f("light", engine->GetShader()->GetProgramID());
-    light->SetVal(1,0,0,1);
+    light->SetVal(1.3,0,0,1);
 
     Uniform4f* color1 = new Uniform4f("color", engine->GetShader()->GetProgramID());
     color1->SetVal(.5,0,0,0);
@@ -56,7 +56,7 @@ DebugState::DebugState(Engine* engine)
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
 
-    mSphere = Primitives::MakeSphere(1.0,20,10);
+    mSphere = Primitives::MakeSphere(1.0,10,5);
     mSphere->SetShader(engine->GetShader());
 
     mSphere->AddAsset(light);
