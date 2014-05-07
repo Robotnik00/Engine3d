@@ -16,6 +16,7 @@
 
 #include <ModelLoader.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <Primitives.h>
 
 using namespace Engine3d;
 
@@ -40,7 +41,7 @@ DebugState::DebugState(Engine* engine)
     mModel2->GetMesh(2)->AddAsset(tex);
 
     Uniform4f* light = new Uniform4f("light", engine->GetShader()->GetProgramID());
-    light->SetVal(10,0,0,0);
+    light->SetVal(1,0,0,1);
 
     Uniform4f* color1 = new Uniform4f("color", engine->GetShader()->GetProgramID());
     color1->SetVal(.5,0,0,0);
@@ -50,11 +51,16 @@ DebugState::DebugState(Engine* engine)
     mModel1->GetMesh(2)->AddAsset(light);
     mModel2->GetMesh(2)->AddAsset(light);
 
-    //mModel1->GetMesh(2)->AddAsset(color1);
-    //mModel2->GetMesh(2)->AddAsset(color2);
+    mModel2->GetMesh(2)->AddAsset(color2);
 
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
+
+    mSphere = Primitives::MakeSphere(1.0,20,10);
+    mSphere->SetShader(engine->GetShader());
+
+    mSphere->AddAsset(light);
+    mSphere->AddAsset(color2);
 
     for(int i = 0; i < 255; i++)
         mKeysDown[i] = 0;
@@ -149,7 +155,9 @@ void DebugState::Draw(float delta)
     GLint myUniformLocation = glGetUniformLocation(mEngine->GetShader()->GetProgramID(), "light");
     glUniform4f(myUniformLocation, 5, 0, 0, .5);
 
-    mModel1->Draw(&mTransform);
+    //mModel1->Draw(&mTransform);
+    mSphere->Draw(&mTransform);
+
     glm::mat4 tmp = glm::translate(mTransform, glm::vec3(0,0,-0.5f));
     //mModel2->Draw(&tmp);
 }

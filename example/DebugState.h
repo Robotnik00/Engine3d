@@ -18,6 +18,7 @@ protected:
 
     Engine3d::Model* mModel1;
     Engine3d::Model* mModel2;
+    Engine3d::ModelMeshBase* mSphere;
 
     glm::mat4 mTransform;
 
