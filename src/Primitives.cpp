@@ -14,7 +14,11 @@ using namespace Engine3d;
 
 ModelMesh<SimpleVertex>* Primitives::MakeSphere(float r, int vsects, int hsects)
 {
-    ModelMesh<SimpleVertex>* mesh = new ModelMesh<SimpleVertex>("sphere");
+    std::string name = "sphere";
+    char buffer[20];
+    sprintf(buffer, "%f%d%d",r,vsects,hsects);
+    name += buffer;
+    ModelMesh<SimpleVertex>* mesh = new ModelMesh<SimpleVertex>(name);
 
     float thetastep = PI/(hsects+1);
     std::cout << thetastep << std::endl;
