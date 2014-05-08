@@ -75,6 +75,7 @@ namespace Engine3d
 
         long  mTime;			// time an update started
         float mFPS;			// drawing frequency
+        float mMaxFPS;
         int   mUpdateFrequency;		// frequency of update callback. must be less than 1000.
 
         bool  mIsRunning;

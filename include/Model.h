@@ -256,7 +256,7 @@ namespace Engine3d
         void Draw(glm::mat4* interpolator);
         void AddMesh(ModelMeshBase* mesh) { mMeshes.push_back(mesh); }
         ModelMeshBase* GetMesh(int i) { return mMeshes[i]; }
-
+        int GetNumMeshes() { return mMeshes.size(); }
         const std::string GetName() { return mModelName; }
 
     protected:

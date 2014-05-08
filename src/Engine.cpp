@@ -40,6 +40,7 @@ Engine::Engine(int width, int height)
 	mHeight			= height;
 	mTime			= 0;
 	mFPS			= 0.0f;
+    mMaxFPS         = 60.0f;
 	mUpdateFrequency	= 25;
 	mIsRunning		= false;
 	mCurrentState 		= NULL;
@@ -50,7 +51,7 @@ Engine::Engine(int width, int height)
 	mTicks 			= 0;
 	// initialize video
 	SDL_Init(SDL_INIT_EVERYTHING);
-	mWindow = SDL_CreateWindow("",  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+    mWindow = SDL_CreateWindow("",  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
 	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
 	glViewport(0, 0, (GLsizei)GetWidth(), (GLsizei)GetHeight());
 	glMatrixMode(GL_PROJECTION); 
@@ -129,6 +130,7 @@ void Engine::Loop()
 	
 	int max_skip = 0;
 
+    long last_draw = 0;
 	while(mIsRunning)
 	{	
 		mTime = SDL_GetTicks();
@@ -144,10 +146,10 @@ void Engine::Loop()
 			mUpdateFrames++;
 			
 			// calculate fps
-			FPSFilter[((mUpdateFrames)) % (filterLength)] = (float)(1000 * (mDrawFrames - lastDrawFrameCount)) / mUpdateFrequency;
+            FPSFilter[((mUpdateFrames)) % (filterLength)] = (float)((mDrawFrames - lastDrawFrameCount)) * mUpdateFrequency;
 			first = FPSFilter[(mUpdateFrames) % filterLength];	
 			last = FPSFilter[(mUpdateFrames+1) % filterLength];
-			mFPS += (float)(first - last)/(filterLength-1);
+            mFPS += (float)(first - last)/(filterLength-1);
 
 			// update state
 			if(mCurrentState != NULL)
@@ -163,14 +165,16 @@ void Engine::Loop()
 			mCallbacks[i]->Schedule(SDL_GetTicks());
 		}
 		// draw state	
-		if(mCurrentState != NULL)
+        if(mCurrentState != NULL && last_draw + 1000/mMaxFPS < SDL_GetTicks() )
 		{
 			delta = ((float)(SDL_GetTicks() - lastUpdate) * mUpdateFrequency) / 1000.0f;
 			mCurrentState->Draw(delta);
-		}
-		Display();
-		mDrawFrames++;
-		mTicks++;
+            last_draw = SDL_GetTicks();
+
+            Display();
+            mDrawFrames++;
+        }
+        mTicks++;
 	}
 	delete FPSFilter;
 }
