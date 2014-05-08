@@ -94,7 +94,131 @@ ModelMesh<SimpleVertex>* Primitives::MakeSphere(float r, int vsects, int hsects)
     return mesh;
 }
 
-ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float w, float h)
+ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float h, float w)
 {
+    std::string name = "box";
+    char buffer[20];
+    sprintf(buffer, "%f%f%f",l,w,h);
+    name += buffer;
+
+    ModelMesh<SimpleVertex>* mesh = new ModelMesh<SimpleVertex>(name);
+
+    Float3f* f1 = new Float3f(0,0,0);
+    Float3f* f2 = new Float3f(0,-h,0);
+    Float3f* f3 = new Float3f(0,-h,w);
+    Float3f* f4 = new Float3f(0,0,w);
+    Float3f* n1 = new Float3f(-1,0,0);
+
+
+
+    Float3f* f5 = new Float3f(0,0,0);
+    Float3f* f6 = new Float3f(l,0,0);
+    Float3f* f7 = new Float3f(l,0,w);
+    Float3f* f8 = new Float3f(0,0,w);
+    Float3f* n2 = new Float3f(0,1,0);
+
+    Float3f* f9 = new Float3f(l,0,0);
+    Float3f* f10 = new Float3f(l,0,w);
+    Float3f* f11 = new Float3f(l,-h,w);
+    Float3f* f12 = new Float3f(l,-h,0);
+    Float3f* n3 = new Float3f(1,0,0);
+
+    Float3f* f13 = new Float3f(0,-h,0);
+    Float3f* f14 = new Float3f(l,-h,0);
+    Float3f* f15 = new Float3f(0,-h,w);
+    Float3f* f16 = new Float3f(l,-h,w);
+    Float3f* n4 = new Float3f(0,-1,0);
+
+
+    Float3f* f17 = new Float3f(0,0,0);
+    Float3f* f18 = new Float3f(0,-h,0);
+    Float3f* f19 = new Float3f(l,0,0);
+    Float3f* f20 = new Float3f(l,-h,0);
+    Float3f* n5 = new Float3f(0,0,-1);
+
+    Float3f* f21 = new Float3f(0,0,w);
+    Float3f* f22 = new Float3f(l,0,w);
+    Float3f* f23 = new Float3f(0,-h,w);
+    Float3f* f24 = new Float3f(l,-h,w);
+    Float3f* n6 = new Float3f(0,0,1);
+
+    Float3f* zero = new Float3f(0,0,0);
+
+    mesh->AddVertex(new SimpleVertex(f1,n1,zero));
+    mesh->AddVertex(new SimpleVertex(f2,n1,zero));
+    mesh->AddVertex(new SimpleVertex(f3,n1,zero));
+    mesh->AddVertex(new SimpleVertex(f4,n1,zero));
+
+    mesh->AddVertex(new SimpleVertex(f5,n2,zero));
+    mesh->AddVertex(new SimpleVertex(f6,n2,zero));
+    mesh->AddVertex(new SimpleVertex(f7,n2,zero));
+    mesh->AddVertex(new SimpleVertex(f8,n2,zero));
+
+    mesh->AddVertex(new SimpleVertex(f9,n3,zero));
+    mesh->AddVertex(new SimpleVertex(f10,n3,zero));
+    mesh->AddVertex(new SimpleVertex(f11,n3,zero));
+    mesh->AddVertex(new SimpleVertex(f12,n3,zero));
+
+    mesh->AddVertex(new SimpleVertex(f13,n4,zero));
+    mesh->AddVertex(new SimpleVertex(f14,n4,zero));
+    mesh->AddVertex(new SimpleVertex(f15,n4,zero));
+    mesh->AddVertex(new SimpleVertex(f16,n4,zero));
+
+    mesh->AddVertex(new SimpleVertex(f17,n5,zero));
+    mesh->AddVertex(new SimpleVertex(f18,n5,zero));
+    mesh->AddVertex(new SimpleVertex(f19,n5,zero));
+    mesh->AddVertex(new SimpleVertex(f20,n5,zero));
+
+    mesh->AddVertex(new SimpleVertex(f21,n6,zero));
+    mesh->AddVertex(new SimpleVertex(f22,n6,zero));
+    mesh->AddVertex(new SimpleVertex(f23,n6,zero));
+    mesh->AddVertex(new SimpleVertex(f24,n6,zero));
+
+
+    mesh->AddIndex(0);
+    mesh->AddIndex(1);
+    mesh->AddIndex(2);
+    mesh->AddIndex(0);
+    mesh->AddIndex(2);
+    mesh->AddIndex(3);
+
+    mesh->AddIndex(4);
+    mesh->AddIndex(5);
+    mesh->AddIndex(6);
+    mesh->AddIndex(4);
+    mesh->AddIndex(6);
+    mesh->AddIndex(7);
+
+    mesh->AddIndex(8);
+    mesh->AddIndex(9);
+    mesh->AddIndex(10);
+    mesh->AddIndex(8);
+    mesh->AddIndex(10);
+    mesh->AddIndex(11);
+
+    mesh->AddIndex(12);
+    mesh->AddIndex(13);
+    mesh->AddIndex(14);
+    mesh->AddIndex(13);
+    mesh->AddIndex(14);
+    mesh->AddIndex(15);
+
+    mesh->AddIndex(16);
+    mesh->AddIndex(17);
+    mesh->AddIndex(18);
+    mesh->AddIndex(17);
+    mesh->AddIndex(18);
+    mesh->AddIndex(19);
+
+    mesh->AddIndex(20);
+    mesh->AddIndex(21);
+    mesh->AddIndex(22);
+    mesh->AddIndex(21);
+    mesh->AddIndex(22);
+    mesh->AddIndex(23);
+
+
+
+    return mesh;
 
 }

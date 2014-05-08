@@ -56,7 +56,7 @@ DebugState::DebugState(Engine* engine)
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
 
-    mSphere = Primitives::MakeSphere(1.0,10,5);
+    mSphere = Primitives::MakeBox(3,5,2);
     mSphere->SetShader(engine->GetShader());
 
     mSphere->AddAsset(light);
