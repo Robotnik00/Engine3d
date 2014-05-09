@@ -7,6 +7,8 @@ in vec3 tex;
 out vec3 v;
 out vec4 N;
 out vec3 texcoords;
+out vec4 lightf;
+uniform vec4 light;
 
 void main()
 {
@@ -14,6 +16,8 @@ void main()
 	transform[3][0] = 0;
 	transform[3][1] = 0;
 	transform[3][2] = 0;
+	
+	lightf = transform * light;
 	
 	N = normalize(transform * vec4(normals,1.0));
 	v = VertexPosition;
