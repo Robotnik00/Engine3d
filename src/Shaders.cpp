@@ -37,10 +37,12 @@ GLuint Shader::LoadShader(const char* filename, char** shaderSource)
 		return -1;
 	}
 
+       
+            
 	file.seekg(0, std::ios::end);
 	long file_length = file.tellg();
 	file.seekg(std::ios::beg);
-	
+        	
 	*shaderSource = new char[file_length+1];
 	
 	(*shaderSource)[file_length] = 0;
@@ -85,20 +87,20 @@ GLuint SimpleShader::BuildProgram()
 	glCompileShaderARB(mFragmentShaderObject);
 
 
-	/*GLint compiled;
+	GLint compiled;
 
-	glGetObjectParameterivARB(vertexShaderObject, GL_COMPILE_STATUS, &compiled);
+	glGetObjectParameterivARB(mVertexShaderObject, GL_COMPILE_STATUS, &compiled);
 
 	if (compiled == GL_TRUE)
 	{
 		std::cout << "vertex shader compiled\n";
 	}     
 
-	glGetObjectParameterivARB(fragmentShaderObject, GL_COMPILE_STATUS, &compiled);
+	glGetObjectParameterivARB(mFragmentShaderObject, GL_COMPILE_STATUS, &compiled);
 	if (compiled == GL_TRUE)
 	{
 		std::cout << "fragment shader compiled\n";
-	}*/
+	}
 
 	GLuint programID = glCreateProgram();
 
@@ -106,16 +108,16 @@ GLuint SimpleShader::BuildProgram()
 	glAttachShader(programID, mFragmentShaderObject);
 
 	
-
+                                               
 	glBindAttribLocation(programID, 0, "VertexPosition");
-	glBindAttribLocation(programID, 1, "normals");
-	glBindAttribLocation(programID, 2, "tex");
+	glBindAttribLocation(programID, 1, "Normal");
+	glBindAttribLocation(programID, 2, "TexCoords");
 	glLinkProgram(programID);
-	/*glGetObjectParameterivARB(programID, GL_LINK_STATUS, &compiled);
+	glGetObjectParameterivARB(programID, GL_LINK_STATUS, &compiled);
 	if (compiled == GL_TRUE)
 	{
 		std::cout << "program linked\n";
-	}*/
+	}
 	mProgramID = programID;
 	return programID;
 }

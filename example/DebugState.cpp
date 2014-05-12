@@ -28,39 +28,26 @@ DebugState::DebugState(Engine* engine)
     : State(engine)
 {
     mModel1 = ModelLoader::Load("models/Armadillo/armadillo.3DS", mEngine->GetShader());
-    mModel2 = ModelLoader::Load("models/Armadillo/armadillo.3DS", mEngine->GetShader());
     std::cout.flush();
 
     Texture* tex = new Texture("models/Armadillo/armadillotex.bmp");
     tex->Load();
 
-    Texture* black = new Texture("models/Armadillo/black.bmp");
-    black->Load();
+    Uniform1f* kdiffuse = new Uniform1f("kdiffuse", mEngine->GetShader()->GetProgramID());
+    kdiffuse->SetVal(1);
+
+    Uniform4f* light = new Uniform4f("light", mEngine->GetShader()->GetProgramID());
+    light->SetVal(1,0,0,1);
 
     mModel1->GetMesh(2)->AddAsset(tex);
-    mModel2->GetMesh(2)->AddAsset(tex);
-
-    Uniform4f* light = new Uniform4f("light", engine->GetShader()->GetProgramID());
-    light->SetVal(1.3,0,0,1);
-
-    Uniform4f* color1 = new Uniform4f("color", engine->GetShader()->GetProgramID());
-    color1->SetVal(.5,0,0,0);
-    Uniform4f* color2 = new Uniform4f("color", engine->GetShader()->GetProgramID());
-    color2->SetVal(0,.5,0,0);
-
     mModel1->GetMesh(2)->AddAsset(light);
-    mModel2->GetMesh(2)->AddAsset(light);
+    mModel1->GetMesh(2)->AddAsset(kdiffuse);
 
-    mModel2->GetMesh(2)->AddAsset(color2);
+
 
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
 
-    mSphere = Primitives::MakeBox(3,5,2);
-    mSphere->SetShader(engine->GetShader());
-
-    mSphere->AddAsset(light);
-    mSphere->AddAsset(color2);
 
     for(int i = 0; i < 255; i++)
         mKeysDown[i] = 0;
@@ -154,9 +141,9 @@ void DebugState::Draw(float delta)
 
     GLint myUniformLocation = glGetUniformLocation(mEngine->GetShader()->GetProgramID(), "light");
     glUniform4f(myUniformLocation, 5, 0, 0, .5);
-
-    //mModel1->Draw(&mTransform);
-    mSphere->Draw(&mTransform);
+               
+    mModel1->Draw(&mTransform);
+    //mSphere->Draw(&mTransform);
 
     glm::mat4 tmp = glm::translate(mTransform, glm::vec3(0,0,-0.5f));
     //mModel2->Draw(&tmp);

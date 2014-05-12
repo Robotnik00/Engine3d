@@ -1,27 +1,31 @@
 #version 130
 
 in vec3 VertexPosition;
-in vec3 normals;
-in vec3 tex;
+in vec3 Normal;
+in vec3 TexCoords;
 
-out vec3 v;
-out vec4 N;
+out vec3 vertex;
+out vec3 normal;
 out vec3 texcoords;
-out vec4 lightf;
+out vec3 lightdir;
+out float lightmag;
+
 uniform vec4 light;
 
 void main()
 {
-	mat4 transform = gl_ModelViewMatrix;
-	transform[3][0] = 0;
-	transform[3][1] = 0;
-	transform[3][2] = 0;
-	
-	lightf = transform * light;
-	
-	N = normalize(transform * vec4(normals,1.0));
-	v = VertexPosition;
-	texcoords = tex;
+  mat4 transform = gl_ModelViewMatrix;
+  transform[3][0] = 0;
+  transform[3][1] = 0;
+  transform[3][2] = 0; 
+
+  vertex = VertexPosition;
+  normal = normalize(transform * vec4(Normal,1)).xyz;
+  texcoords = TexCoords;
+
+  lightdir = normalize(light.xyz);
+  lightmag = light.w;
+   
 
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(VertexPosition,1.0);
 }

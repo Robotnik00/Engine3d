@@ -1,23 +1,23 @@
 #version 130
 
-in vec3 v;    
-in vec4 N;
+in vec3 vertex;    
+in vec3 normal;
 in vec3 texcoords;
-in vec4 lightf;
+in vec3 lightdir;
+in float lightmag;
 
 out vec4 FragColor;
 
 uniform sampler2D Tex1;
 
-uniform vec4 light;
-uniform vec4 color;
+uniform float kdiffuse;
 
 void main (void)  
 {  
-   float dotprod = dot(lightf, N);
+  float Idiff = lightmag * kdiffuse * max(0, dot(normal, -lightdir));
+  
+  vec4 texcolor = texture(Tex1,texcoords.xy);
 	
-   vec4 texcolor = texture(Tex1,texcoords.xy);
-	
-   FragColor = (texcolor + color) * dotprod; 
+  FragColor = (texcolor) * Idiff; 
 }
 

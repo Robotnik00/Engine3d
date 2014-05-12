@@ -7,6 +7,8 @@
 
 #include <iostream>
 
+#include <stdio.h>
+
 #define PI 3.141592654
 
 using namespace Engine3d;
@@ -15,7 +17,7 @@ using namespace Engine3d;
 ModelMesh<SimpleVertex>* Primitives::MakeSphere(float r, int vsects, int hsects)
 {
     std::string name = "sphere";
-    char buffer[20];
+    char buffer[50];
     sprintf(buffer, "%f%d%d",r,vsects,hsects);
     name += buffer;
     ModelMesh<SimpleVertex>* mesh = new ModelMesh<SimpleVertex>(name);
@@ -101,7 +103,7 @@ ModelMesh<SimpleVertex>* Primitives::MakeSphere(float r, int vsects, int hsects)
 ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float h, float w)
 {
     std::string name = "box";
-    char buffer[20];
+    char buffer[50];
     sprintf(buffer, "%f%f%f",l,w,h);
     name += buffer;
 

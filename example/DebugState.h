@@ -21,7 +21,7 @@ protected:
     Engine3d::ModelMeshBase* mSphere;
 
     glm::mat4 mTransform;
-
+    glm::mat4 mScale;
     bool mKeysDown[256];
 
 };

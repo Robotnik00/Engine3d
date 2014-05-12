@@ -7,7 +7,7 @@
 #include <assimp/postprocess.h>
 
 #include <stdio.h>
-
+#include <iostream>
 using namespace Engine3d;
 using namespace Assimp;
 
@@ -18,7 +18,6 @@ Model* ModelLoader::Load(const std::string filename, Shader* shader)
     Importer importer;
 
     const aiScene *scene = importer.ReadFile(filename, aiProcessPreset_TargetRealtime_Fast);//aiProcessPreset_TargetRealtime_Fast has the configs you'll needai
-
     for(int i = 0; i < scene->mNumMeshes; i++)
     {
         std::string name = filename.data();
@@ -42,8 +41,15 @@ Model* ModelLoader::Load(const std::string filename, Shader* shader)
         {
             Float3f* loc = new Float3f(aimesh->mVertices[j].x, aimesh->mVertices[j].y, aimesh->mVertices[j].z);
             Float3f* norm = new Float3f(aimesh->mNormals[j].x, aimesh->mNormals[j].y, aimesh->mNormals[j].z);
-            Float3f* texcoors = new Float3f(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][j].y*-1, aimesh->mTextureCoords[0][j].z);
-
+            Float3f* texcoors = NULL; 
+            if(aimesh->HasTextureCoords(0))
+            {
+              texcoors = new Float3f(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][j].y*-1, aimesh->mTextureCoords[0][j].z);
+            }
+            else 
+            {
+              texcoors = new Float3f(0,0,0);
+            }
             mesh->AddVertex(new SimpleVertex(loc,norm,texcoors));
         }
 

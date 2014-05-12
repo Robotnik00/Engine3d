@@ -184,6 +184,17 @@ namespace Engine3d
         GLuint mTexid;
     };
 
+    class Uniform1f : public Asset
+    {
+    public:
+      Uniform1f(std::string uniname, GLuint programid);
+      void SetVal(float x);
+      virtual void Bind();
+      virtual void UnBind();
+      GLuint mUniId;
+      float mx;
+    };
+
     class Uniform4f : public Asset
     {
     public:

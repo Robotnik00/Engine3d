@@ -275,6 +275,25 @@ void Texture::Load()
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	SDL_FreeSurface(surface);
 }
+
+Uniform1f::Uniform1f(std::string uniname, GLuint programid)
+{
+  mUniId = glGetUniformLocation(programid, uniname.data());
+}
+void Uniform1f::SetVal(float x)
+{
+  mx = x;
+}
+
+void Uniform1f::Bind()
+{
+  glUniform1f(mUniId, mx);
+}
+void Uniform1f::UnBind()
+{
+  glUniform1f(mUniId, 0);
+}
+
 Uniform4f::Uniform4f(std::string uniname, GLuint programid)
 {
     mUniId = glGetUniformLocation(programid, uniname.data());
