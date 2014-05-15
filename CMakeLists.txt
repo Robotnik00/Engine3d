@@ -9,8 +9,7 @@ set(ASSIMP_SRC_DIR "not_found" CACHE PATH "library for importing 3d models")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY CACHE PATH "out dir")
 
-file(GLOB sourcecode ${Engine3d_SOURCE_DIR}/include/*.h ${Engine3d_SOURCE_DIR}/src/*.cpp )
-
+file(GLOB sourcecode ${Engine3d_SOURCE_DIR}/include/*.h ${Engine3d_SOURCE_DIR}/src/*.cpp ${Engine3d_SOURCE_DIR}/resources/shaders/*.vert ${Engine3d_SOURCE_DIR}/resources/shaders/*.frag)
 include_directories(${Engine3d_SOURCE_DIR}/include; ${ASSIMP_SRC_DIR}/include; ${GLM_SRC_DIR}; ${SDL_SRC_DIR}/include include)
 link_directories(${ASSIMP_SRC_DIR}/lib; ${SDL_SRC_DIR}/build)
 
@@ -22,5 +21,3 @@ add_library(Engine3d SHARED ${sourcecode})
 target_link_libraries(Engine3d  SDL2 assimp pthread GL GLU dl rt)
 
 add_subdirectory(example)
-
-

@@ -195,6 +195,17 @@ namespace Engine3d
       float mx;
     };
 
+    class Uniform3f : public Asset
+    {
+    public:
+        Uniform3f(std::string uniname, GLuint programid);
+        void SetVal(float x, float y, float z);
+        virtual void Bind();
+        virtual void UnBind();
+        GLuint mUniId;
+        float mx,my,mz;
+    };
+
     class Uniform4f : public Asset
     {
     public:
@@ -204,6 +215,56 @@ namespace Engine3d
         virtual void UnBind();
         GLuint mUniId;
         float mx,my,mz,mw;
+    };
+
+    class Material : public Asset
+    {
+    public:
+        Material(GLuint programid);
+        ~Material();
+        virtual void Bind();
+        virtual void UnBind();
+        void SetDiffuse(float r, float g, float b) { mMaterialDiffuse->SetVal(r,g,b); }
+        void SetAmbient(float r, float g, float b) { mMaterialAmbient->SetVal(r,g,b); }
+        void SetSpecular(float r, float g, float b) { mMaterialSpecular->SetVal(r,g,b); }
+        void SetShininess(float shininess) { mShininess->SetVal(shininess); }
+    protected:
+        Uniform3f* mMaterialDiffuse;
+        Uniform3f* mMaterialAmbient;
+        Uniform3f* mMaterialSpecular;
+        Uniform1f* mShininess;
+    };
+    class Light : public Asset
+    {
+    public:
+        Light(GLuint programid);
+        ~Light();
+        virtual void Bind();
+        virtual void UnBind();
+        void SetPosition(float x, float y, float z) { mLightPosition->SetVal(x,y,z); }
+        void SetAmbient(float r, float g, float b) { mLightAmbient->SetVal(r,g,b); }
+        void SetDiffuse(float r, float g, float b) { mLightDiffuse->SetVal(r,g,b); }
+        void SetSpecular(float r, float g, float b) { mLightSpecular->SetVal(r,g,b); }
+        void SetConstAttenuation(float c) { mConstAttenuation->SetVal(c); }
+        void SetLinearAttenuation(float c) { mLinearAttenuation->SetVal(c); }
+        void SetQuadraticAttenuation(float c) { mQuadraticAttenuation->SetVal(c); }
+        void SetSpotCutoff(float c) { mSpotCutoff->SetVal(c); }
+        void SetSpotExponent(float c) { mSpotExponent->SetVal(c); }
+        void SetSpotDirection(float x, float y, float z) { mSpotDirection->SetVal(x,y,z); }
+    protected:
+        Uniform3f* mLightPosition;
+        // light reflectivity
+        Uniform3f* mLightAmbient;
+        Uniform3f* mLightDiffuse;
+        Uniform3f* mLightSpecular;
+        // light attenuation
+        Uniform1f* mConstAttenuation;
+        Uniform1f* mLinearAttenuation;
+        Uniform1f* mQuadraticAttenuation;
+        // spotlight parameters
+        Uniform1f* mSpotCutoff;
+        Uniform1f* mSpotExponent;
+        Uniform3f* mSpotDirection;
     };
 
     // meshes are encaspulated by models. a model contains an array of meshes.

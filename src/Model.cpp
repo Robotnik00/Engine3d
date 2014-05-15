@@ -273,7 +273,8 @@ void Texture::Load()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w,surface->h, 0, GL_RGB,GL_UNSIGNED_BYTE,surface->pixels);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	SDL_FreeSurface(surface);
+    SDL_FreeSurface(surface);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Uniform1f::Uniform1f(std::string uniname, GLuint programid)
@@ -294,6 +295,23 @@ void Uniform1f::UnBind()
   glUniform1f(mUniId, 0);
 }
 
+Uniform3f::Uniform3f(std::string uniname, GLuint programid)
+{
+    mUniId = glGetUniformLocation(programid, uniname.data());
+}
+void Uniform3f::SetVal(float x, float y, float z)
+{
+    mx = x, my =y, mz = z;
+}
+void Uniform3f::Bind()
+{
+    glUniform3f(mUniId, mx, my, mz);
+}
+void Uniform3f::UnBind()
+{
+    glUniform3f(mUniId, 0, 0, 0);
+}
+
 Uniform4f::Uniform4f(std::string uniname, GLuint programid)
 {
     mUniId = glGetUniformLocation(programid, uniname.data());
@@ -310,6 +328,105 @@ void Uniform4f::UnBind()
 {
     glUniform4f(mUniId, 0, 0, 0, 0);
 }
+
+Material::Material(GLuint programid)
+{
+    mMaterialDiffuse = new Uniform3f("material.diffuse", programid);
+    mMaterialDiffuse->SetVal(1,1,1);
+    mMaterialSpecular = new Uniform3f("material.specular", programid);
+    mMaterialSpecular->SetVal(1,1,1);
+    mMaterialAmbient = new Uniform3f("material.ambient", programid);
+    mMaterialAmbient->SetVal(1,1,1);
+    mShininess = new Uniform1f("material.shininess", programid);
+    mShininess->SetVal(50);
+
+}
+Material::~Material()
+{
+    delete mMaterialDiffuse;
+    delete mMaterialSpecular;
+    delete mMaterialAmbient;
+    delete mShininess;
+}
+
+void Material::Bind()
+{
+    mMaterialDiffuse->Bind();
+    mMaterialSpecular->Bind();
+    mMaterialAmbient->Bind();
+    mShininess->Bind();
+}
+void Material::UnBind()
+{
+    mMaterialDiffuse->UnBind();
+    mMaterialSpecular->UnBind();
+    mMaterialAmbient->UnBind();
+    mShininess->UnBind();
+}
+Light::Light(GLuint programid)
+{
+    mLightPosition = new Uniform3f("light1.position", programid);
+    mLightPosition->SetVal(0,0,0);
+    mLightAmbient = new Uniform3f("light1.ambientLight", programid);
+    mLightAmbient->SetVal(0.01f,0.01f,0.01f);
+    mLightDiffuse = new Uniform3f("light1.diffuse", programid);
+    mLightDiffuse->SetVal(1,1,1);
+    mLightSpecular = new Uniform3f("light1.specular", programid);
+    mLightSpecular->SetVal(.1,.1,.1);
+    mConstAttenuation = new Uniform1f("light1.constantAttenuation", programid);
+    mConstAttenuation->SetVal(1);
+    mLinearAttenuation = new Uniform1f("light1.linearAttenuation", programid);
+    mLinearAttenuation->SetVal(1);
+    mQuadraticAttenuation = new Uniform1f("light1.quadraticAttenuation", programid);
+    mQuadraticAttenuation->SetVal(1);
+    mSpotCutoff = new Uniform1f("light1.spotCutoff", programid);
+    mSpotCutoff->SetVal(180);
+    mSpotExponent = new Uniform1f("light1.spotExponent", programid);
+    mSpotExponent->SetVal(1);
+    mSpotDirection = new Uniform3f("light1.spotDirection", programid);
+    mSpotDirection->SetVal(0,0,-1);
+}
+Light::~Light()
+{
+    delete mLightPosition;
+    delete mLightAmbient;
+    delete mLightDiffuse;
+    delete mLightSpecular;
+    delete mConstAttenuation;
+    delete mLinearAttenuation;
+    delete mQuadraticAttenuation;
+    delete mSpotCutoff;
+    delete mSpotExponent;
+    delete mSpotDirection;
+}
+
+void Light::Bind()
+{
+    mLightPosition->Bind();
+    mLightAmbient->Bind();
+    mLightDiffuse->Bind();
+    mLightSpecular->Bind();
+    mConstAttenuation->Bind();
+    mLinearAttenuation->Bind();
+    mQuadraticAttenuation->Bind();
+    mSpotCutoff->Bind();
+    mSpotExponent->Bind();
+    mSpotDirection->Bind();
+}
+void Light::UnBind()
+{
+    mLightPosition->UnBind();
+    mLightAmbient->UnBind();
+    mLightDiffuse->UnBind();
+    mLightSpecular->UnBind();
+    mConstAttenuation->UnBind();
+    mLinearAttenuation->UnBind();
+    mQuadraticAttenuation->UnBind();
+    mSpotCutoff->UnBind();
+    mSpotExponent->UnBind();
+    mSpotDirection->UnBind();
+}
+
 
 ModelMeshBase::ModelMeshBase(const std::string name)
 	: mName(name)

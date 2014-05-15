@@ -30,20 +30,28 @@ DebugState::DebugState(Engine* engine)
     mModel1 = ModelLoader::Load("models/Armadillo/armadillo.3DS", mEngine->GetShader());
     std::cout.flush();
 
+
+    mSphere = Primitives::MakeBox(10,10,10);
+    mSphere->SetShader(mEngine->GetShader());
+    //mModel1->AddMesh(mSphere);
+
     Texture* tex = new Texture("models/Armadillo/armadillotex.bmp");
     tex->Load();
 
-    Uniform1f* kdiffuse = new Uniform1f("kdiffuse", mEngine->GetShader()->GetProgramID());
-    kdiffuse->SetVal(1);
 
-    Uniform4f* light = new Uniform4f("light", mEngine->GetShader()->GetProgramID());
-    light->SetVal(1,0,0,1);
+    Material* material = new Material(mEngine->GetShader()->GetProgramID());
+    Light* light = new Light(mEngine->GetShader()->GetProgramID());
 
-    mModel1->GetMesh(2)->AddAsset(tex);
+
+    mModel1->GetMesh(0)->AddAsset(material);
+    mModel1->GetMesh(0)->AddAsset(light);
+    mModel1->GetMesh(1)->AddAsset(material);
+    mModel1->GetMesh(1)->AddAsset(light);
+    mModel1->GetMesh(2)->AddAsset(material);
     mModel1->GetMesh(2)->AddAsset(light);
-    mModel1->GetMesh(2)->AddAsset(kdiffuse);
-
-
+    mModel1->GetMesh(2)->AddAsset(tex);
+    light->SetPosition(.5,0,-.5);
+    light->SetDiffuse(5,5,5);
 
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 

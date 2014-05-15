@@ -60,7 +60,7 @@ Engine::Engine(int width, int height)
 	glMatrixMode(GL_MODELVIEW);
 	
 	glEnable (GL_DEPTH_TEST);
-    	mShader = new SimpleShader("default", "shaders/VertexShader.txt", "shaders/FragmentShader.txt");
+        mShader = new SimpleShader("default", "shaders/VertexShader.vert", "shaders/FragmentShader.frag");
 	glUseProgram(mShader->GetProgramID());
 }
 Engine::~Engine()

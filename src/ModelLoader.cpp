@@ -55,6 +55,7 @@ Model* ModelLoader::Load(const std::string filename, Shader* shader)
 
         mesh->SetShader(shader);
 
+
         m->AddMesh(mesh);
     }
 

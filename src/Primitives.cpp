@@ -41,7 +41,6 @@ ModelMesh<SimpleVertex>* Primitives::MakeSphere(float r, int vsects, int hsects)
             float x = cos(phi)*sin(theta) * r;
             float y = sin(phi)*sin(theta) * r;
             float z = cos(theta) * r;
-            std::cout << x << " " << " " << y << " " << z << std::endl;
             Float3f* f = new Float3f(x,y,z);
             SimpleVertex* v = new SimpleVertex(f,f,zero);
             mesh->AddVertex(v);
