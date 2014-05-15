@@ -77,6 +77,10 @@ void main (void)
   if(texcoords.x != 0 && texcoords.y != 0)
   {
       texcolor = texture(Tex1, texcoords.xy);
+      if(texcolor.x == 0 && texcolor.y == 0 && texcolor.z == 0)
+      {
+          texcolor = vec4(1,1,1,1);
+      }
   }
 
 
