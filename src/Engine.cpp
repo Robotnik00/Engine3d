@@ -113,6 +113,10 @@ void Engine::RemoveInterval(void (*function)(void))
 	}
 }
 
+void Engine::SetUpdateFrequency(int updateFrequency)
+{
+    mUpdateFrequency = updateFrequency;
+}
 
 void Engine::Loop()
 {

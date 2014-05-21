@@ -329,6 +329,20 @@ void Uniform4f::UnBind()
     glUniform4f(mUniId, 0, 0, 0, 0);
 }
 
+UniformMat4::UniformMat4(std::string uniname, GLuint programid)
+{
+    mUniId = glGetUniformLocation(programid, uniname.data());
+}
+void UniformMat4::Bind()
+{
+    glUniformMatrix4fv(mUniId, 1, GL_FALSE, glm::value_ptr(mMatrix));
+}
+
+void UniformMat4::UnBind()
+{
+    glUniformMatrix4fv(mUniId, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+}
+
 Material::Material(GLuint programid)
 {
     mMaterialDiffuse = new Uniform3f("material.diffuse", programid);

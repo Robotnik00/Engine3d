@@ -217,6 +217,17 @@ namespace Engine3d
         float mx,my,mz,mw;
     };
 
+    class UniformMat4 : public Asset
+    {
+    public:
+        UniformMat4(std::string uniname, GLuint programid);
+        void SetVal(glm::mat4 matrix) { mMatrix = matrix; }
+        void Bind();
+        void UnBind();
+        GLuint mUniId;
+        glm::mat4 mMatrix;
+    };
+
     class Material : public Asset
     {
     public:

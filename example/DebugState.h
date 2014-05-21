@@ -1,5 +1,6 @@
 #pragma once
 #include <States.h>
+#include <Scene.h>
 #include <Model.h>
 
 /// a simple debug state
@@ -19,6 +20,7 @@ protected:
     Engine3d::Model* mModel1;
     Engine3d::Model* mModel2;
     Engine3d::ModelMeshBase* mSphere;
+    Engine3d::SceneObjectNode* mNode1;
 
     glm::mat4 mTransform;
     glm::mat4 mScale;

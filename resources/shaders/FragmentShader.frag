@@ -31,6 +31,8 @@ uniform sampler2D Tex1;
 uniform MaterialParameters material;
 uniform LightParameters light1;
 
+uniform mat4 cameraposition = mat4(1);
+
 void main (void)  
 {  
   float attenuation = 1;

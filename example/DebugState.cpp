@@ -31,7 +31,7 @@ DebugState::DebugState(Engine* engine)
     std::cout.flush();
 
 
-    mSphere = Primitives::MakeBox(10,10,10);
+    mSphere = Primitives::MakeSphere(.5,20,10);
     mSphere->SetShader(mEngine->GetShader());
     //mModel1->AddMesh(mSphere);
 
@@ -42,6 +42,8 @@ DebugState::DebugState(Engine* engine)
     Material* material = new Material(mEngine->GetShader()->GetProgramID());
     Light* light = new Light(mEngine->GetShader()->GetProgramID());
 
+    mSphere->AddAsset(material);
+    mSphere->AddAsset(light);
 
     mModel1->GetMesh(0)->AddAsset(material);
     mModel1->GetMesh(0)->AddAsset(light);
@@ -55,6 +57,23 @@ DebugState::DebugState(Engine* engine)
 
     mTransform = glm::translate(mTransform, glm::vec3(0,0,-5));
 
+    mNode1 = new Engine3d::SceneObjectNode();
+    mNode1->SetLocalPosition(glm::vec3(0,0,-5));
+    Engine3d:;DrawModel* drawmodel = new Engine3d::DrawModel(mModel1);
+    mNode1->AddDrawInterface(drawmodel);
+
+    Engine3d::SceneObjectNode* node2 = new Engine3d::SceneObjectNode();
+    node2->AddDrawInterface(drawmodel);
+    node2->SetLocalPosition(glm::vec3(0,1,0));
+    mNode1->AddChild(node2);
+
+
+
+    Engine3d::SceneObjectNode* node3 = new Engine3d::SceneObjectNode();
+    Engine3d::DrawMesh<SimpleVertex>* drawmesh = new Engine3d::DrawMesh<SimpleVertex>((Engine3d::ModelMesh<SimpleVertex>*)mSphere);
+    node3->AddDrawInterface(drawmesh);
+    node3->SetLocalPosition(glm::vec3(0,2,0));
+    mNode1->AddChild(node3);
 
 
     for(int i = 0; i < 255; i++)
@@ -74,6 +93,7 @@ void DebugState::Update()
 
 
 
+    mNode1->Update();
     mCounter++;
     if(mCounter % 25 == 0)
     {
@@ -84,54 +104,53 @@ void DebugState::Update()
     }
     if(mKeysDown['j'])
     {
-        mTransform = glm::rotate(mTransform, 10.0f, glm::vec3(1.0f,0,0));
+        mNode1->Rotate(10.0f, glm::vec3(1.0f,0,0));
     }
     if(mKeysDown['k'])
     {
-        mTransform = glm::rotate(mTransform, 10.0f, glm::vec3(0,1.0f,0));
+        mNode1->Rotate(10.0f, glm::vec3(0,1.0f,0));
     }
     if(mKeysDown['l'])
     {
-        mTransform = glm::rotate(mTransform, 10.0f, glm::vec3(0,0,1.0f));
+        mNode1->Rotate(10.0f, glm::vec3(0,0,1.0f));
     }
     if(mKeysDown['u'])
     {
-        mTransform = glm::rotate(mTransform, -10.0f, glm::vec3(1.0f,0,0));
+        mNode1->Rotate(-10.0f, glm::vec3(1.0f,0,0));
     }
     if(mKeysDown['i'])
     {
-        mTransform = glm::rotate(mTransform, -10.0f, glm::vec3(0,1.0f,0));
+        mNode1->Rotate(-10.0f, glm::vec3(0,1.0f,0));
     }
     if(mKeysDown['o'])
     {
-        mTransform = glm::rotate(mTransform, -10.0f, glm::vec3(0,0,1.0f));
+        mNode1->Rotate(-10.0f, glm::vec3(0,0,1.0f));
     }
 
     if(mKeysDown['w'])
     {
-        mTransform = glm::translate(mTransform, glm::vec3(0,0,-0.05f));
+        mNode1->Translate(glm::vec3(0,0,-0.05f));
     }
     if(mKeysDown['s'])
     {
-        mTransform = glm::translate(mTransform, glm::vec3(0,0,0.05f));
+        mNode1->Translate(glm::vec3(0,0,0.05f));
     }
     if(mKeysDown['a'])
     {
-        mTransform = glm::translate(mTransform, glm::vec3(-0.05f,0,0));
+        mNode1->Translate(glm::vec3(-0.05,0,0));
     }
     if(mKeysDown['d'])
     {
-        mTransform = glm::translate(mTransform, glm::vec3(0.05f,0,0));
+        mNode1->Translate(glm::vec3(0.05,0,0));
     }
     if(mKeysDown['z'])
     {
-        mTransform = glm::translate(mTransform, glm::vec3(0,0.05f,0));
+        mNode1->Translate(glm::vec3(0,0.05f,0));
     }
     if(mKeysDown['x'])
     {
-        mTransform = glm::translate(mTransform, glm::vec3(0,-0.05f,0));
+        mNode1->Translate(glm::vec3(0,-0.05f,0));
     }
-
 
 
 
@@ -147,14 +166,8 @@ void DebugState::Draw(float delta)
     glClearColor(0.208f, 0.9f, 0.8f, 1.0f); // Clear the background of our window to white
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GLint myUniformLocation = glGetUniformLocation(mEngine->GetShader()->GetProgramID(), "light");
-    glUniform4f(myUniformLocation, 5, 0, 0, .5);
-               
-    mModel1->Draw(&mTransform);
-    //mSphere->Draw(&mTransform);
+    mNode1->Draw(delta);
 
-    glm::mat4 tmp = glm::translate(mTransform, glm::vec3(0,0,-0.5f));
-    //mModel2->Draw(&tmp);
 }
 void DebugState::ProcessEvent(SDL_Event* event)
 {
