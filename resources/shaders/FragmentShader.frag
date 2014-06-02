@@ -66,7 +66,7 @@ void main (void)
   vec4 Ispec;
   if(dot(normal,lightdir) < 0)
   {
-    Ispec = 0;
+    Ispec = vec4(0);
   }
   else 
   {
