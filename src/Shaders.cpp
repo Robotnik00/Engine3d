@@ -7,7 +7,7 @@
 
 using namespace Engine3d;
 
-Shader::Shader(const char* name, const char* vertexShader, const char* fragmentShader)
+Shader::Shader(const char* name, const char* vertexShader, const char* fragmentShader, int argc, char** argv)
 {
 	this->name = name;
 	GLchar* VertexShaderSource;
@@ -24,6 +24,8 @@ Shader::Shader(const char* name, const char* vertexShader, const char* fragmentS
 	glShaderSourceARB(mVertexShaderObject, 1, (const GLchar**)&VertexShaderSource, &vlength);
 	glShaderSourceARB(mFragmentShaderObject, 1, (const GLchar**)&FragmentShaderSource, &flength);
 
+    mArgc = argc;
+    mArgv = argv;
 	
 }
 
@@ -75,8 +77,8 @@ void Shader::RemoveMesh(ModelMeshBase* mesh)
 	mMeshes.erase(mesh->GetName());
 }
 
-SimpleShader::SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader)
-	: Shader(name, vertexShader, fragmentShader)
+SimpleShader::SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader, int argc, char** argv)
+    : Shader(name, vertexShader, fragmentShader, argc, argv)
 {
 	BuildProgram();	
 }
@@ -107,11 +109,12 @@ GLuint SimpleShader::BuildProgram()
 	glAttachShader(programID, mVertexShaderObject);
 	glAttachShader(programID, mFragmentShaderObject);
 
-	
-                                               
-	glBindAttribLocation(programID, 0, "VertexPosition");
-	glBindAttribLocation(programID, 1, "Normal");
-	glBindAttribLocation(programID, 2, "TexCoords");
+    for(int i = 0; i < mArgc; i++)
+    {
+
+        glBindAttribLocation(programID, i, mArgv[i]);
+    }
+
 	glLinkProgram(programID);
 	glGetObjectParameterivARB(programID, GL_LINK_STATUS, &compiled);
 	if (compiled == GL_TRUE)

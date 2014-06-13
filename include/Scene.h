@@ -2,6 +2,8 @@
 
 #include <Model.h>
 #include <glm/glm.hpp>
+#define NDEBUG
+#include <PxPhysicsAPI.h>
 
 namespace Engine3d
 {
@@ -10,6 +12,7 @@ namespace Engine3d
     public:
         virtual void PerformAction() = 0;
     };
+
     class DrawInterface
     {
     public:
@@ -19,24 +22,28 @@ namespace Engine3d
     class DrawModel : public DrawInterface
     {
     public:
-        DrawModel(Model* model) { mModel = model; }
+        DrawModel(Model* model) { mModel = model; mOffset = glm::mat4(1); }
         virtual void Draw(glm::mat4 *interpolator)
         {
-            mModel->Draw(interpolator);
+            glm::mat4 transform = mOffset * *interpolator;
+            mModel->Draw(&transform);
         }
+
+        virtual void SetOffset(glm::mat4 offset) { mOffset = offset; }
 
     protected:
         Model* mModel;
+        glm::mat4 mOffset;
     };
 
-    template <class T> class DrawMesh : public DrawInterface
+    class DrawMesh : public DrawInterface
     {
     public:
-        DrawMesh(ModelMesh<T>* mesh) { mMesh = mesh; }
+        DrawMesh(ModelMeshBase* mesh) { mMesh = mesh; }
         virtual void Draw(glm::mat4* interpolator) { mMesh->Draw(interpolator); }
 
     protected:
-        ModelMesh<T>* mMesh;
+        ModelMeshBase* mMesh;
     };
 
     class SceneObjectNode
@@ -64,11 +71,6 @@ namespace Engine3d
         void Scale(glm::vec3 scale);
 
         void SetLocalPosition(glm::vec3 loc);
-        void SetLocalOrientation(float angle, glm::vec3 axis);
-        void SetLocalScale(glm::vec3 scale);
-
-        void SetGlobalPosition(glm::vec3 loc);
-        void SetGlobalOrientation(float angle, glm::vec3 axis);
 
         void SetLocalTransform(glm::mat4 transform);
         void SetGlobalTransform(glm::mat4 transform);
@@ -76,13 +78,21 @@ namespace Engine3d
         glm::mat4 GetGlobalTransform();
         glm::mat4 GetLocalTransform();
 
+        glm::vec3 GetGlobalPosition();
+        glm::vec3 GetGlobalOrientation();
+
         void SetParent(SceneObjectNode* parent) { mParent = parent; }
         SceneObjectNode* GetParent() { return mParent; }
+
+        void SetBounds(physx::PxActor* bounds) { mBounds = bounds; }
+        physx::PxActor* GetBounds() { return mBounds; }
 
     protected:
 
         glm::mat4 GetGlobalInterpolator();
 
+
+        physx::PxActor* mBounds;
 
         std::vector<Action*> mActions;
         std::vector<DrawInterface*> mDrawInterfaces;

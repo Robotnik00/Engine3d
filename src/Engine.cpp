@@ -19,7 +19,7 @@ void Callback::Schedule(long ticks)
 	{
 		mCallback();
 		mLastCall = ticks;
-	}
+    }
 }
 
 callbackptr Callback::GetCallback()
@@ -58,9 +58,17 @@ Engine::Engine(int width, int height)
 	glLoadIdentity();
 	gluPerspective(60, (GLfloat)GetWidth() / (GLfloat)GetHeight(), 0.1, 100.0); 
 	glMatrixMode(GL_MODELVIEW);
-	
-	glEnable (GL_DEPTH_TEST);
-        mShader = new SimpleShader("default", "shaders/VertexShader.vert", "shaders/FragmentShader.frag");
+    glEnable (GL_DEPTH_TEST);
+
+    char arg1[] = "VertexPosition";
+    char arg2[] = "Normal";
+    char arg3[] = "TexCoords";
+    char** argv = new char*[3];
+    argv[0] = arg1;
+    argv[1] = arg2;
+    argv[2] = arg3;
+
+    mShader = new SimpleShader("default", "shaders/VertexShader.vert", "shaders/FragmentShader.frag", 3, argv);
 	glUseProgram(mShader->GetProgramID());
 }
 Engine::~Engine()

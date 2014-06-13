@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Engine.h"
+#define NDEBUG
+#include <PxPhysicsAPI.h>
 
 namespace Engine3d
 {

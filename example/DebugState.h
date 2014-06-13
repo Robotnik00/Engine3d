@@ -1,7 +1,20 @@
+
+
+
+
 #pragma once
+
+
 #include <States.h>
 #include <Scene.h>
 #include <Model.h>
+#include <Input.h>
+
+//#define NDEBUG
+//#include <PxPhysicsAPI.h>
+
+#include <PhysicsEngine.h>
+
 
 /// a simple debug state
 class DebugState : public Engine3d::State
@@ -13,17 +26,39 @@ public:
     void Draw(float delta);
     void ProcessEvent(SDL_Event* event);
 
+    void CreateRandomObject();
+
 protected:
 
     long mCounter;
 
     Engine3d::Model* mModel1;
     Engine3d::Model* mModel2;
-    Engine3d::ModelMeshBase* mSphere;
+    Engine3d::Model* mModel3;
+    Engine3d::SceneObjectNode* mRootNode;
     Engine3d::SceneObjectNode* mNode1;
+    Engine3d::SceneObjectNode* mNode2;
+    Engine3d::SceneObjectNode* mNode3;
+    Engine3d::Light* mLight;
 
-    glm::mat4 mTransform;
-    glm::mat4 mScale;
+    /*physx::PxMaterial* mMaterial1;
+    physx::PxMaterial* mMaterial2;
+
+    static physx::PxDefaultErrorCallback gDefaultErrorCallback;
+    static physx::PxDefaultAllocator gDefaultAllocatorCallback;
+
+    physx::PxFoundation* mFoundation;
+    physx::PxProfileZoneManager* mProfileZoneManager;
+    physx::PxPhysics* mPhysics;
+
+
+    physx::PxScene* mScene;
+    physx::PxCpuDispatcher* mCpuDispatcher;*/
+
+    Engine3d::PhysicsEngine mPhysics;
+
+    int  count, timestep;
+
     bool mKeysDown[256];
 
 };

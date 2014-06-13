@@ -9,7 +9,7 @@ namespace Engine3d
     class Shader
     {
     public:
-        Shader(const char* name, const char* vertexShader, const char* fragmentShader);
+        Shader(const char* name, const char* vertexShader, const char* fragmentShader, int argc, char** argv);
 
         GLuint 	GetProgramID() { return mProgramID; }
         void	MakeActive();
@@ -29,12 +29,14 @@ namespace Engine3d
         GLuint mProgramID;
         GLuint mVertexShaderObject, mFragmentShaderObject;
         std::map<std::string, ModelMeshBase*> mMeshes;
+        int mArgc;
+        char** mArgv;
     };
 
     class SimpleShader : public Shader
     {
     public:
-        SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader);
+        SimpleShader(const char* name, const char* vertexShader, const char* fragmentShader, int argc, char** argv);
         void AddMesh(ModelMeshBase* mesh);
         GLuint BuildProgram();
 

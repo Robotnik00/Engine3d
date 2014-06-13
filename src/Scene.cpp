@@ -14,6 +14,7 @@ SceneObjectNode::SceneObjectNode()
     mDeltaScale = glm::vec3(1);
     mDeltaRotate = glm::vec3(0);
     mDeltaTranslate = glm::vec3(0);
+
 }
 
 SceneObjectNode::~SceneObjectNode()
@@ -107,25 +108,6 @@ void SceneObjectNode::SetLocalPosition(glm::vec3 loc)
     mTransform[3][2] = loc.z;
 }
 
-void SceneObjectNode::SetLocalOrientation(float angle, glm::vec3 axis)
-{
-
-}
-
-void SceneObjectNode::SetLocalScale(glm::vec3 scale)
-{
-
-}
-
-void SceneObjectNode::SetGlobalPosition(glm::vec3 loc)
-{
-
-}
-
-void SceneObjectNode::SetGlobalOrientation(float angle, glm::vec3 axis)
-{
-
-}
 
 void SceneObjectNode::SetLocalTransform(glm::mat4 transform)
 {
@@ -134,7 +116,13 @@ void SceneObjectNode::SetLocalTransform(glm::mat4 transform)
 
 void SceneObjectNode::SetGlobalTransform(glm::mat4 transform)
 {
-
+    mDeltaTranslate = glm::vec3(0);
+    mDeltaScale = glm::vec3(0);
+    mDeltaRotate = glm::vec3(0);
+    mTransform = glm::mat4(1);
+    glm::mat4 glbtransform = GetGlobalTransform();
+    glbtransform = glm::inverse(glbtransform);
+    mTransform = glbtransform * transform;
 }
 
 glm::mat4 SceneObjectNode::GetLocalTransform()
@@ -160,4 +148,13 @@ glm::mat4 SceneObjectNode::GetGlobalInterpolator()
     }
 
     return mParent->GetGlobalInterpolator() * mInterpolator;
+}
+glm::vec3 SceneObjectNode::GetGlobalPosition()
+{
+    glm::mat4 transform = GetGlobalTransform();
+    glm::vec3 position = glm::vec3(0);
+    position.x = transform[3][0];
+    position.y = transform[3][1];
+    position.z = transform[3][2];
+    return position;
 }

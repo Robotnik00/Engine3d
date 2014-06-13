@@ -5,14 +5,14 @@
 
 void callback()
 {
-	std::cout << "callback\n";
+    std::cout << "callback\n";
     std::cout.flush();
 }
 
 int main(void)
 {
     Engine3d::Engine* engine = new Engine3d::Engine(500, 500);
-    engine->SetInterval(callback, 1000);
+    //engine->SetInterval(callback, 100);
     //engine->RemoveInterval(callback);
     Engine3d::State* state = new DebugState(engine);
     engine->ChangeState(state);
