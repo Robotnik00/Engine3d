@@ -108,44 +108,42 @@ ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float h, float w)
 
     ModelMesh<SimpleVertex>* mesh = new ModelMesh<SimpleVertex>(name);
 
-    Float3f* f1 = new Float3f(0,0,0);
-    Float3f* f2 = new Float3f(0,-h,0);
-    Float3f* f3 = new Float3f(0,-h,w);
-    Float3f* f4 = new Float3f(0,0,w);
-    Float3f* n1 = new Float3f(-1,0,0);
+    Float3f* f1 = new Float3f(-w/2,h/2,l/2);
+    Float3f* f2 = new Float3f(w/2,h/2,l/2);
+    Float3f* f3 = new Float3f(-w/2,-h/2,l/2);
+    Float3f* f4 = new Float3f(w/2,-h/2,l/2);
+    Float3f* n1 = new Float3f(0,0,1);
+
+    Float3f* f5 = new Float3f(-w/2,h/2,l/2);
+    Float3f* f6 = new Float3f(-w/2,-h/2,l/2);
+    Float3f* f7 = new Float3f(-w/2,-h/2,-l/2);
+    Float3f* f8 = new Float3f(-w/2,h/2,-l/2);
+    Float3f* n2 = new Float3f(-1,0,0);
+
+    Float3f* f9 = new Float3f(-w/2,-h/2,-l/2);
+    Float3f* f10 = new Float3f(-w/2,h/2,-l/2);
+    Float3f* f11 = new Float3f(w/2,-h/2,-l/2);
+    Float3f* f12 = new Float3f(w/2,h/2,-l/2);
+    Float3f* n3 = new Float3f(0,0,-1);
+
+    Float3f* f13 = new Float3f(w/2,h/2,-l/2);
+    Float3f* f14 = new Float3f(w/2,h/2,l/2);
+    Float3f* f15 = new Float3f(w/2,-h/2,l/2);
+    Float3f* f16 = new Float3f(w/2,-h/2,-l/2);
+    Float3f* n4 = new Float3f(1,0,0);
 
 
+    Float3f* f17 = new Float3f(-w/2,h/2,l/2);
+    Float3f* f18 = new Float3f(-w/2,h/2,-l/2);
+    Float3f* f19 = new Float3f(w/2,h/2,-l/2);
+    Float3f* f20 = new Float3f(w/2,h/2,l/2);
+    Float3f* n5 = new Float3f(0,1,0);
 
-    Float3f* f5 = new Float3f(0,0,0);
-    Float3f* f6 = new Float3f(l,0,0);
-    Float3f* f7 = new Float3f(l,0,w);
-    Float3f* f8 = new Float3f(0,0,w);
-    Float3f* n2 = new Float3f(0,1,0);
-
-    Float3f* f9 = new Float3f(l,0,0);
-    Float3f* f10 = new Float3f(l,0,w);
-    Float3f* f11 = new Float3f(l,-h,w);
-    Float3f* f12 = new Float3f(l,-h,0);
-    Float3f* n3 = new Float3f(1,0,0);
-
-    Float3f* f13 = new Float3f(0,-h,0);
-    Float3f* f14 = new Float3f(l,-h,0);
-    Float3f* f15 = new Float3f(0,-h,w);
-    Float3f* f16 = new Float3f(l,-h,w);
-    Float3f* n4 = new Float3f(0,-1,0);
-
-
-    Float3f* f17 = new Float3f(0,0,0);
-    Float3f* f18 = new Float3f(0,-h,0);
-    Float3f* f19 = new Float3f(l,0,0);
-    Float3f* f20 = new Float3f(l,-h,0);
-    Float3f* n5 = new Float3f(0,0,-1);
-
-    Float3f* f21 = new Float3f(0,0,w);
-    Float3f* f22 = new Float3f(l,0,w);
-    Float3f* f23 = new Float3f(0,-h,w);
-    Float3f* f24 = new Float3f(l,-h,w);
-    Float3f* n6 = new Float3f(0,0,1);
+    Float3f* f21 = new Float3f(-w/2,-h/2,l/2);
+    Float3f* f22 = new Float3f(-w/2,-h/2,-l/2);
+    Float3f* f23 = new Float3f(w/2,-h/2,-l/2);
+    Float3f* f24 = new Float3f(w/2,-h/2,l/2);
+    Float3f* n6 = new Float3f(0,-1,0);
 
     Float3f* zero = new Float3f(0,0,0);
 
@@ -183,9 +181,9 @@ ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float h, float w)
     mesh->AddIndex(0);
     mesh->AddIndex(1);
     mesh->AddIndex(2);
-    mesh->AddIndex(0);
-    mesh->AddIndex(2);
+    mesh->AddIndex(1);
     mesh->AddIndex(3);
+    mesh->AddIndex(2);
 
     mesh->AddIndex(4);
     mesh->AddIndex(5);
@@ -197,28 +195,28 @@ ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float h, float w)
     mesh->AddIndex(8);
     mesh->AddIndex(9);
     mesh->AddIndex(10);
-    mesh->AddIndex(8);
+    mesh->AddIndex(9);
     mesh->AddIndex(10);
     mesh->AddIndex(11);
 
     mesh->AddIndex(12);
     mesh->AddIndex(13);
     mesh->AddIndex(14);
-    mesh->AddIndex(13);
+    mesh->AddIndex(12);
     mesh->AddIndex(14);
     mesh->AddIndex(15);
 
     mesh->AddIndex(16);
     mesh->AddIndex(17);
     mesh->AddIndex(18);
-    mesh->AddIndex(17);
+    mesh->AddIndex(16);
     mesh->AddIndex(18);
     mesh->AddIndex(19);
 
     mesh->AddIndex(20);
     mesh->AddIndex(21);
     mesh->AddIndex(22);
-    mesh->AddIndex(21);
+    mesh->AddIndex(20);
     mesh->AddIndex(22);
     mesh->AddIndex(23);
 

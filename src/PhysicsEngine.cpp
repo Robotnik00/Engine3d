@@ -27,6 +27,7 @@ bool PhysicsEngine::Initialize()
     bool recordMemoryAllocations = true;
     mPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *mFoundation,
                 physx::PxTolerancesScale(), recordMemoryAllocations, mProfileZoneManager );
+
     if(!mPhysics)
     {
         return false;
@@ -35,7 +36,7 @@ bool PhysicsEngine::Initialize()
     physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
     sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 
-    mCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
+    mCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(3);
     if(!mCpuDispatcher)
     {
         return false;

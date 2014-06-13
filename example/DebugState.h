@@ -32,14 +32,8 @@ protected:
 
     long mCounter;
 
-    Engine3d::Model* mModel1;
-    Engine3d::Model* mModel2;
-    Engine3d::Model* mModel3;
     Engine3d::SceneObjectNode* mRootNode;
-    Engine3d::SceneObjectNode* mNode1;
-    Engine3d::SceneObjectNode* mNode2;
-    Engine3d::SceneObjectNode* mNode3;
-    Engine3d::Light* mLight;
+    Engine3d::SceneObjectNode* mGimble;
 
     /*physx::PxMaterial* mMaterial1;
     physx::PxMaterial* mMaterial2;

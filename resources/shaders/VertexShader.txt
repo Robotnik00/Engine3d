@@ -19,7 +19,7 @@ void main()
   transform[3][1] = 0;
   transform[3][2] = 0; 
 
-  vertex = VertexPosition;
+  vertex = gl_ModelViewMatrix * VertexPosition;
   normal = normalize(transform * vec4(Normal,1)).xyz;
   texcoords = TexCoords;
 

@@ -45,7 +45,7 @@ Model* ModelLoader::Load(const std::string filename, Shader* shader)
             if(aimesh->HasTextureCoords(0))
             {
               texcoors = new Float3f(aimesh->mTextureCoords[0][j].x, aimesh->mTextureCoords[0][j].y*-1, aimesh->mTextureCoords[0][j].z);
-    //          std::cout << "mesh: " << i << std::endl;
+              
             }
             else 
             {

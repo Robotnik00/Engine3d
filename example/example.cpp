@@ -11,7 +11,7 @@ void callback()
 
 int main(void)
 {
-    Engine3d::Engine* engine = new Engine3d::Engine(500, 500);
+    Engine3d::Engine* engine = new Engine3d::Engine(1000, 1000);
     //engine->SetInterval(callback, 100);
     //engine->RemoveInterval(callback);
     Engine3d::State* state = new DebugState(engine);
