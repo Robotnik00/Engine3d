@@ -104,7 +104,7 @@ SimpleVertex::SimpleVertex(Float3f* coords, Float3f* norms, Float3f* texcoords)
 	mAttributes = new Attribute*[mNumAttributes];
 	mAttributes[0] = coords;
 	mAttributes[1] = norms;
-	mAttributes[2] = texcoords;
+    mAttributes[2] = texcoords;
 }
 
 VBO::VBO()
@@ -267,7 +267,7 @@ void Texture::UnBind()
 void Texture::Load()
 {
 
-	SDL_Surface* surface = SDL_LoadBMP(mFilename.data());
+    SDL_Surface* surface = SDL_LoadBMP(mFilename.data());
 	glGenTextures(1, &mTexid);    
 	glBindTexture(GL_TEXTURE_2D,mTexid);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w,surface->h, 0, GL_RGB,GL_UNSIGNED_BYTE,surface->pixels);

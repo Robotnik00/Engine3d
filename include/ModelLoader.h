@@ -2,12 +2,15 @@
 
 #include <Model.h>
 #include <Shaders.h>
+#include <PhysicsEngine.h>
 
 namespace Engine3d
 {
     class ModelLoader
     {
     public:
-        static Model* Load(const std::string filename, Shader* shader);
+        static void Load(Model* m, Shader* shader, PhysicsEngine* mPhysics = NULL);
+    protected:
+        static std::map<std::string, Model*> mLoadedModels;
     };
 }

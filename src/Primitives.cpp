@@ -95,11 +95,10 @@ ModelMesh<SimpleVertex>* Primitives::MakeSphere(float r, int vsects, int hsects)
     mesh->AddIndex(mesh->GetVertices().size() - vsects-1);
 
 
-
     return mesh;
 }
 
-ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float h, float w)
+ModelMesh<SimpleVertex>* Primitives::MakeBox(float w, float h, float l)
 {
     std::string name = "box";
     char buffer[50];
@@ -221,6 +220,8 @@ ModelMesh<SimpleVertex>* Primitives::MakeBox(float l, float h, float w)
     mesh->AddIndex(23);
 
 
+    physx::PxGeometry *g = new physx::PxBoxGeometry(w/2,h/2,l/2);
+    mesh->SetBounds(g);
 
     return mesh;
 

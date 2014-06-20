@@ -84,15 +84,12 @@ namespace Engine3d
         void SetParent(SceneObjectNode* parent) { mParent = parent; }
         SceneObjectNode* GetParent() { return mParent; }
 
-        void SetBounds(physx::PxActor* bounds) { mBounds = bounds; }
-        physx::PxActor* GetBounds() { return mBounds; }
 
     protected:
-
+        glm::mat4 GetPrevGlobalTransform();
         glm::mat4 GetGlobalInterpolator();
 
 
-        physx::PxActor* mBounds;
 
         std::vector<Action*> mActions;
         std::vector<DrawInterface*> mDrawInterfaces;
@@ -100,12 +97,10 @@ namespace Engine3d
         SceneObjectNode* mParent;
         std::vector<SceneObjectNode*> mChildren;
         glm::mat4 mTransform;
+        glm::mat4 mPrevTransform;
         glm::mat4 mInterpolator;
 
 
-        glm::vec3 mDeltaTranslate;
-        glm::vec3 mDeltaRotate;
-        glm::vec3 mDeltaScale;
     };
 
 }

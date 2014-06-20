@@ -1,4 +1,5 @@
 #include <PhysicsEngine.h>
+#include <iostream>
 
 using namespace Engine3d;
 
@@ -32,11 +33,16 @@ bool PhysicsEngine::Initialize()
     {
         return false;
     }
-
+    //physx::PxCookingParams p = physx::PxCookingParams();
+    mCooking = PxCreateCooking(PX_PHYSICS_VERSION, *mFoundation, physx::PxCookingParams(mPhysics->getTolerancesScale()));
+    if (!mCooking)
+    {
+        return false;
+    }
     physx::PxSceneDesc sceneDesc(mPhysics->getTolerancesScale());
     sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 
-    mCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(3);
+    mCpuDispatcher = physx::PxDefaultCpuDispatcherCreate(4);
     if(!mCpuDispatcher)
     {
         return false;
@@ -52,17 +58,13 @@ bool PhysicsEngine::Initialize()
         return false;
     }
 
+
     return true;
 }
 
-void PhysicsEngine::AddPhysicsObject(std::string name, SceneObjectNode *node)
+void PhysicsEngine::AddPhysicsObject(std::string name, PhysicsCallback *p)
 {
-    node->GetBounds()->setName(name.data());
-    mScene->addActor(*node->GetBounds());
-
-    mPhysicsObjects[name] = node;
-
-
+    mPhysicsObjects[name] = p;
 }
 
 void PhysicsEngine::Update(float dt)
@@ -80,7 +82,9 @@ void PhysicsEngine::Update(float dt)
             if(actor != NULL)
             {
                 physx::PxMat44 mat(actor->getGlobalPose());
-                mPhysicsObjects[actor->getName()]->SetLocalTransform(*((glm::mat4*)&mat));
+                mPhysicsObjects[actor->getName()]->UpdateTransform(*((glm::mat4*)&mat));
+                std::cout << "hey\n";
+                std::cout.flush();
             }
         }
     }
@@ -92,3 +96,38 @@ void PhysicsEngine::Update(float dt)
     mScene->simulate(dt);
     mScene->fetchResults(true);
 }
+
+PhysicsCallback::PhysicsCallback(std::string name, SceneObjectNode *node, ModelMeshBase *mesh)
+{
+    mName = name;
+    mNode = node;
+    mMesh = mesh;
+    mIsStatic = false;
+}
+
+void PhysicsCallback::Initialize(PhysicsEngine *physics)
+{
+    mPhysicsMat = physics->GetPhysics()->createMaterial(0.5f,0.5f,0.5f);
+    physx::PxShape* shape = physics->GetPhysics()->createShape(*mMesh->GetBounds(), *mPhysicsMat);
+    glm::mat4 tmp = mNode->GetLocalTransform();
+    physx::PxRigidActor* actor;
+    if(!mIsStatic)
+    {
+        actor = physics->GetPhysics()->createRigidDynamic(physx::PxTransform(*((physx::PxMat44*)&tmp)));
+        actor->attachShape(*shape);
+        physx::PxRigidBodyExt::updateMassAndInertia(*(physx::PxRigidDynamic*)actor, 100.0f);
+    }
+    else
+    {
+        actor = physics->GetPhysics()->createRigidStatic(physx::PxTransform(*((physx::PxMat44*)&tmp)));
+        actor->attachShape(*shape);
+    }
+
+    actor->setName(mName.data());
+
+
+    physics->AddPhysicsObject(mName, this);
+    physics->GetScene()->addActor(*actor);
+
+}
+

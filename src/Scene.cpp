@@ -11,9 +11,7 @@ SceneObjectNode::SceneObjectNode()
 {
     mParent = NULL;
     mTransform = glm::mat4(1);
-    mDeltaScale = glm::vec3(1);
-    mDeltaRotate = glm::vec3(0);
-    mDeltaTranslate = glm::vec3(0);
+    mPrevTransform = glm::mat4(1);
 
 }
 
@@ -24,17 +22,7 @@ SceneObjectNode::~SceneObjectNode()
 
 void SceneObjectNode::Update()
 {
-    mTransform = glm::scale(mTransform, mDeltaScale);
-    if(mDeltaRotate != glm::vec3(0))
-    {
-        mTransform = glm::rotate(mTransform, (float)pow(glm::dot(mDeltaRotate, mDeltaRotate),.5), glm::normalize(mDeltaRotate));
-    }
-    mTransform = glm::translate(mTransform, mDeltaTranslate);
-
-    mDeltaScale = glm::vec3(1);
-    mDeltaRotate = glm::vec3(0);
-    mDeltaTranslate = glm::vec3(0);
-
+    mPrevTransform = mTransform;
 
     for(int i = 0; i < mActions.size(); i++)
     {
@@ -53,19 +41,9 @@ void SceneObjectNode::Draw(float delta)
         mAssets[i]->Bind();
     }
 
-
-    mInterpolator = mTransform;
-    mInterpolator = GetGlobalInterpolator();
-    glm::vec3 d_translate = mDeltaTranslate * delta;
-    glm::vec3 d_rotate = mDeltaRotate * delta;
-    glm::vec3 d_scale = glm::vec3(1,1,1) - (glm::vec3(1,1,1) - mDeltaScale) * delta;
-
-    mInterpolator = glm::scale(mInterpolator, d_scale);
-    if(mDeltaRotate != glm::vec3(0))
-    {
-        mInterpolator = glm::rotate(mInterpolator, (float)pow(glm::dot(d_rotate, d_rotate),.5), glm::normalize(d_rotate));
-    }
-    mInterpolator = glm::translate(mInterpolator, d_translate);
+    glm::mat4 prevtran = GetPrevGlobalTransform();
+    glm::mat4 tran = GetGlobalTransform();
+    mInterpolator = prevtran + (tran - prevtran) * delta;
 
     for(int i = 0; i < mDrawInterfaces.size(); i++)
     {
@@ -85,20 +63,17 @@ void SceneObjectNode::Draw(float delta)
 
 void SceneObjectNode::Translate(glm::vec3 translation)
 {
-    //mTransform = glm::translate(mTransform, translation);
-    mDeltaTranslate += translation;
+    mTransform = glm::translate(mTransform, translation);
 }
 
 void SceneObjectNode::Rotate(float angle, glm::vec3 axis)
 {
-    //mTransform = glm::rotate(mTransform, angle, glm::normalize(axis));
-    mDeltaRotate += (angle * axis);
+    mTransform = glm::rotate(mTransform, angle, glm::normalize(axis));
 }
 
 void SceneObjectNode::Scale(glm::vec3 scale)
 {
-    //mTransform = glm::scale(mTransform, scale);
-    mDeltaScale *= scale;
+    mTransform = glm::scale(mTransform, scale);
 }
 
 void SceneObjectNode::SetLocalPosition(glm::vec3 loc)
@@ -116,9 +91,6 @@ void SceneObjectNode::SetLocalTransform(glm::mat4 transform)
 
 void SceneObjectNode::SetGlobalTransform(glm::mat4 transform)
 {
-    mDeltaTranslate = glm::vec3(0);
-    mDeltaScale = glm::vec3(0);
-    mDeltaRotate = glm::vec3(0);
     mTransform = glm::mat4(1);
     glm::mat4 glbtransform = GetGlobalTransform();
     glbtransform = glm::inverse(glbtransform);
@@ -138,6 +110,16 @@ glm::mat4 SceneObjectNode::GetGlobalTransform()
     }
 
     return mParent->GetGlobalTransform() * mTransform;
+}
+glm::mat4 SceneObjectNode::GetPrevGlobalTransform()
+{
+    if(mParent == NULL)
+    {
+        return mPrevTransform;
+    }
+
+    return mParent->GetPrevGlobalTransform() * mPrevTransform;
+
 }
 
 glm::mat4 SceneObjectNode::GetGlobalInterpolator()

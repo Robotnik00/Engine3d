@@ -11,6 +11,8 @@
 #include <vector>
 #include <string>
 
+#define NDEBUG
+#include <PxPhysicsAPI.h>
 
 
 
@@ -284,7 +286,7 @@ namespace Engine3d
     class ModelMeshBase
     {
     public:
-        ModelMeshBase(const std::string name);
+        ModelMeshBase(const std::string name);        
         ~ModelMeshBase();
         void Draw(glm::mat4* interpolator);
 
@@ -303,6 +305,8 @@ namespace Engine3d
         std::vector<unsigned int> GetIndices() { return mIndices; }
 
 
+        void SetBounds(physx::PxGeometry* bounds) { mBounds = bounds; }
+        physx::PxGeometry* GetBounds() { return mBounds; }
     protected:
 
         IBO* mIBO; // a referance to a vbo(shader specific)
@@ -316,6 +320,8 @@ namespace Engine3d
 
         const std::string mName;	// mesh name. (name of the file + index)
                         // Ex. for file meodlname.3DS mesh name = modelname.3DS0
+
+        physx::PxGeometry* mBounds;
     };
 
     template <class T> class ModelMesh : public ModelMeshBase
@@ -334,16 +340,16 @@ namespace Engine3d
     class Model
     {
     public:
-        Model(const char* name) { mModelName = name; }
+        Model(const char* filename) { mFileName = filename; }
         ~Model();
         void Draw(glm::mat4* interpolator);
         void AddMesh(ModelMeshBase* mesh) { mMeshes.push_back(mesh); }
         ModelMeshBase* GetMesh(int i) { return mMeshes[i]; }
         int GetNumMeshes() { return mMeshes.size(); }
-        const std::string GetName() { return mModelName; }
+        const std::string GetFileName() { return mFileName; }
 
     protected:
-        std::string  mModelName;
+        std::string  mFileName;
 
         std::vector<ModelMeshBase*> mMeshes; // list of meshes. each one gets its own assets and shader type.
 
