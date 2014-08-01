@@ -13,6 +13,11 @@ SceneObjectNode::SceneObjectNode()
     mTransform = glm::mat4(1);
     mPrevTransform = glm::mat4(1);
 
+    mNextTranslation = glm::mat4(1);
+    mNextRotation = glm::mat4(1);
+    mNextScale = glm::mat4(1);
+
+    mNewTransform = false;
 }
 
 SceneObjectNode::~SceneObjectNode()
@@ -22,7 +27,17 @@ SceneObjectNode::~SceneObjectNode()
 
 void SceneObjectNode::Update()
 {
-    mPrevTransform = mTransform;
+    if(!mNewTransform)
+    {
+        mPrevTransform = mTransform;
+    }
+
+    mTransform = mNextTranslation * mNextRotation * mNextScale * mTransform;
+    mNextTranslation = glm::mat4(1);
+    mNextRotation = glm::mat4(1);
+    mNextScale = glm::mat4(1);
+
+    mNewTransform = false;
 
     for(int i = 0; i < mActions.size(); i++)
     {
@@ -63,17 +78,18 @@ void SceneObjectNode::Draw(float delta)
 
 void SceneObjectNode::Translate(glm::vec3 translation)
 {
-    mTransform = glm::translate(mTransform, translation);
+    //mTransform = glm::translate(mTransform, translation);
+    mNextTranslation = glm::translate(mNextTranslation, translation);
 }
 
 void SceneObjectNode::Rotate(float angle, glm::vec3 axis)
 {
-    mTransform = glm::rotate(mTransform, angle, glm::normalize(axis));
+    mNextRotation = glm::rotate(mNextRotation, angle, glm::normalize(axis));
 }
 
 void SceneObjectNode::Scale(glm::vec3 scale)
 {
-    mTransform = glm::scale(mTransform, scale);
+    mNextScale = glm::scale(mNextScale, scale);
 }
 
 void SceneObjectNode::SetLocalPosition(glm::vec3 loc)
@@ -86,7 +102,10 @@ void SceneObjectNode::SetLocalPosition(glm::vec3 loc)
 
 void SceneObjectNode::SetLocalTransform(glm::mat4 transform)
 {
+    mPrevTransform = mTransform;
     mTransform = transform;
+    mNewTransform = true;
+
 }
 
 void SceneObjectNode::SetGlobalTransform(glm::mat4 transform)

@@ -40,7 +40,7 @@ using namespace Engine3d;
 DebugState::DebugState(Engine* engine)
     : State(engine)
 {
-    mEngine->SetUpdateFrequency(30.0f);
+    mEngine->SetUpdateFrequency(20.0f);
     count = 0;
     if(mPhysics.Initialize())
     {
@@ -132,7 +132,7 @@ DebugState::DebugState(Engine* engine)
     box->SetShader(mEngine->GetShader());
     DrawMesh* drawmesh = new DrawMesh(box);
     node1->AddDrawInterface(drawmesh);
-    node1->SetLocalPosition(glm::vec3(3.0f,3.0f,-20.0f));
+    node1->SetLocalPosition(glm::vec3(3.0f,20.0f,-20.0f));
     PhysicsCallback* phys = new PhysicsCallback("box", node1, box);
     phys->Initialize(&mPhysics);
 
@@ -210,51 +210,39 @@ void DebugState::Update()
     if(mKeysDown['q'] == 1)
     {
         glm::vec4 axis = glm::vec4(0,0,1,1);
-        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
-        axis = (glm::normalize(axis));
         mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
     if(mKeysDown['e'] == 1)
     {
         glm::vec4 axis = glm::vec4(0,0,-1,1);
-        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
-        axis = (glm::normalize(axis));
         mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
     if(mKeysDown[80] == 1) // left
     {
         glm::vec4 axis = glm::vec4(0,1,0,1);
-        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
-        axis = (glm::normalize(axis));
         mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
     if(mKeysDown[82] == 1) // up
     {
         glm::vec4 axis = glm::vec4(1,0,0,1);
-        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
-        axis = (glm::normalize(axis));
         mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
     if(mKeysDown[79] == 1) // right
     {
         glm::vec4 axis = glm::vec4(0,-1,0,1);
-        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
-        axis = (glm::normalize(axis));
         mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
     if(mKeysDown[81] == 1) // down
     {
         glm::vec4 axis = glm::vec4(-1,0,0,1);
-        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
-        axis = (glm::normalize(axis));
         mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
 
 
     timestep++;
-    if(timestep % 2 == 0)
+    if(timestep % 10 == 0)
     {
-//        CreateRandomObject();
+        //CreateRandomObject();
     }
 
     mPhysics.Update(1.0f/mEngine->GetUpdateFrequency());
@@ -274,8 +262,6 @@ void DebugState::ProcessEvent(SDL_Event* event)
     switch(event->type)
     {
     case SDL_KEYDOWN:
-        std::cout << "key: " << event->key.keysym.sym%256 << std::endl;
-        std::cout.flush();
         mKeysDown[event->key.keysym.sym%256] = true;
         break;
     case SDL_KEYUP:

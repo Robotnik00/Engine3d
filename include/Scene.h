@@ -108,8 +108,8 @@ namespace Engine3d
 
         glm::mat4 GetGlobalInterpolator();
 
-    protected:
         glm::mat4 GetPrevGlobalTransform();
+    protected:
 
 
 
@@ -118,10 +118,14 @@ namespace Engine3d
         std::vector<Asset*> mAssets;
         SceneObjectNode* mParent;
         std::vector<SceneObjectNode*> mChildren;
+        glm::mat4 mNextTranslation;
+        glm::mat4 mNextRotation;
+        glm::mat4 mNextScale;
         glm::mat4 mTransform;
         glm::mat4 mPrevTransform;
         glm::mat4 mInterpolator;
 
+        bool mNewTransform;
 
     };
 

@@ -40,7 +40,7 @@ Engine::Engine(int width, int height)
 	mHeight			= height;
 	mTime			= 0;
 	mFPS			= 0.0f;
-    mMaxFPS         = 60.0f;
+    mMaxFPS         = 120.0f;
 	mUpdateFrequency	= 25;
 	mIsRunning		= false;
 	mCurrentState 		= NULL;
