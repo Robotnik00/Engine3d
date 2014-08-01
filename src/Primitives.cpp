@@ -95,6 +95,10 @@ ModelMesh<SimpleVertex>* Primitives::MakeSphere(float r, int vsects, int hsects)
     mesh->AddIndex(mesh->GetVertices().size() - vsects-1);
 
 
+
+    physx::PxGeometry *g = new physx::PxSphereGeometry(r);
+    mesh->SetBounds(g);
+
     return mesh;
 }
 

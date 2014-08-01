@@ -40,7 +40,7 @@ using namespace Engine3d;
 DebugState::DebugState(Engine* engine)
     : State(engine)
 {
-    mEngine->SetUpdateFrequency(100.0f);
+    mEngine->SetUpdateFrequency(30.0f);
     count = 0;
     if(mPhysics.Initialize())
     {
@@ -52,15 +52,18 @@ DebugState::DebugState(Engine* engine)
 
     mRootNode = new SceneObjectNode();
     Engine3d::Light* light = new Light(mEngine->GetShader()->GetProgramID());
-    light->SetPosition(1.0,0,0);
-    light->SetDiffuse(3,3,3);
-    light->SetSpecular(1,1,1);
-    light->SetAmbient(.1f,.1f,.1f);
-    mRootNode->AddAsset(light);
-    mRootNode->Translate(glm::vec3(-2.0f,-5.0f,7.0f));
+    light->SetPosition(2.1f,5.0f,-18.0f);
+    light->SetDiffuse(10,10,10);
+    light->SetSpecular(10,10,10);
+    light->SetConstAttenuation(.01);
+    light->SetAmbient(0.2f,0.2f,0.2f);
     mGimble = new SceneObjectNode();
     mRootNode->AddChild(mGimble);
-    mGimble->Rotate(15, glm::vec3(1,0,0));
+
+    mGimble->AddAsset(light);
+
+    CameraLocationUpdater* cam = new CameraLocationUpdater(mEngine->GetShader()->GetProgramID());
+    mGimble->AddDrawInterface(cam);
 
 
     SceneObjectNode* node = new SceneObjectNode();
@@ -82,47 +85,71 @@ DebugState::DebugState(Engine* engine)
 
 
 
-    Model* ship = new Model("models/Armadillo/armadillo.3DS");
-    ModelLoader::Load(ship, mEngine->GetShader(), &mPhysics);
-    Texture* texture = new Texture("models/Armadillo/armadillotex.bmp");
-    texture->SetProgramID(mEngine->GetShader()->GetProgramID());
-    texture->Load();
-    ship->GetMesh(2)->AddAsset(mat);
-    ship->GetMesh(2)->AddAsset(texture);
-    SceneObjectNode* shipnode = new SceneObjectNode();
-    DrawModel* drawship = new DrawModel(ship);
-    shipnode->AddDrawInterface(drawship);
-    mGimble->AddChild(shipnode);
-    shipnode->Translate(glm::vec3(5,5,-20));
-    PhysicsCallback* physicscbship1 = new PhysicsCallback("ship1", shipnode, ship->GetMesh(2));
-    physicscbship1->Initialize(&mPhysics);
+//    Model* ship = new Model("models/Armadillo/armadillo.3DS");
+//    ModelLoader::Load(ship, mEngine->GetShader(), &mPhysics);
+//    Texture* texture = new Texture("models/Armadillo/armadillotex.bmp");
+//    texture->SetProgramID(mEngine->GetShader()->GetProgramID());
+//    texture->Load();
+//    ship->GetMesh(2)->AddAsset(mat);
+//    ship->GetMesh(2)->AddAsset(texture);
+//    SceneObjectNode* shipnode = new SceneObjectNode();
+//    DrawModel* drawship = new DrawModel(ship);
+//    shipnode->AddDrawInterface(drawship);
+
+//    mGimble->AddChild(shipnode);
+//    shipnode->Translate(glm::vec3(5,5,-20));
+//    PhysicsCallback* physicscbship1 = new PhysicsCallback("ship1", shipnode, ship->GetMesh(2));
+//    physicscbship1->Initialize(&mPhysics);
 
 
-    Model* ship2 = new Model("models/Armadillo/armadillo.3DS");
-    ModelLoader::Load(ship2, mEngine->GetShader(), &mPhysics);
-    Texture* texture2 = new Texture("models/Armadillo/armadillotex.bmp");
-    texture2->SetProgramID(mEngine->GetShader()->GetProgramID());
-    texture2->Load();
-    ship2->GetMesh(2)->AddAsset(mat);
-    ship2->GetMesh(2)->AddAsset(texture2);
-    SceneObjectNode* shipnode2 = new SceneObjectNode();
-    DrawModel* drawship2 = new DrawModel(ship2);
-    shipnode2->AddDrawInterface(drawship2);
-    mGimble->AddChild(shipnode2);
-    shipnode2->Translate(glm::vec3(3,5,-20));
+//    Model* ship2 = new Model("models/Armadillo/armadillo.3DS");
+//    ModelLoader::Load(ship2, mEngine->GetShader(), &mPhysics);
+//    Texture* texture2 = new Texture("models/Armadillo/armadillotex.bmp");
+//    texture2->SetProgramID(mEngine->GetShader()->GetProgramID());
+//    texture2->Load();
+//    ship2->GetMesh(2)->AddAsset(mat);
+//    ship2->GetMesh(2)->AddAsset(texture2);
+//    SceneObjectNode* shipnode2 = new SceneObjectNode();
+//    DrawModel* drawship2 = new DrawModel(ship2);
+//    shipnode2->AddDrawInterface(drawship2);
+//    mGimble->AddChild(shipnode2);
+//    shipnode2->Translate(glm::vec3(3,5,-20));
+//    PhysicsCallback* physicscbship = new PhysicsCallback("ship2", shipnode2, ship2->GetMesh(2));
+//    physicscbship->Initialize(&mPhysics);
 
-    PhysicsCallback* physicscbship = new PhysicsCallback("ship2", shipnode2, ship2->GetMesh(2));
-    physicscbship->Initialize(&mPhysics);
 
-    CreateRandomObject();
+//    CreateRandomObject();
 
+
+
+    SceneObjectNode* node1 = new SceneObjectNode();
+
+    ModelMesh<SimpleVertex>* box = Primitives::MakeBox(1,1,1);
+    Material* mat1 = new Engine3d::Material(mEngine->GetShader()->GetProgramID());
+    mat1->SetDiffuse(1.0f,0.0f,0.0f);
+    mat1->SetShininess(200);
+    box->AddAsset(mat1);
+    box->SetShader(mEngine->GetShader());
+    DrawMesh* drawmesh = new DrawMesh(box);
+    node1->AddDrawInterface(drawmesh);
+    node1->SetLocalPosition(glm::vec3(3.0f,3.0f,-20.0f));
+    PhysicsCallback* phys = new PhysicsCallback("box", node1, box);
+    phys->Initialize(&mPhysics);
+
+    mGimble->AddChild(node1);
 
 
     for(int i = 0; i < 255; i++)
         mKeysDown[i] = 0;
 
 
-    glClearColor(0.0, 0.0f, 0.0f, 1.0f); // Clear the background of our window to white
+    mCameraTransform = new UniformMat4("cameratransform", mEngine->GetShader()->GetProgramID());
+
+
+
+
+
+    glClearColor(0.0, 1.0f, 1.0f, 1.0f); // Clear the background of our window to whitex
 }
 
 DebugState::~DebugState()
@@ -132,32 +159,133 @@ DebugState::~DebugState()
 
 void DebugState::Update()
 {
+
+
     char buffer[50];
     sprintf(buffer, "%2.2f", mEngine->GetFPS());
     mEngine->SetTitle(buffer);
 
-    timestep++;
-    if(timestep % 30 == 0)
+    if(mKeysDown['w'] == 1)
     {
-        CreateRandomObject();
+        glm::vec4 axis = glm::vec4(0,0,1,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis) * 0.6f);
+        mGimble->Translate(glm::vec3(axis.x, axis.y, axis.z));
+    }
+    if(mKeysDown['a'] == 1)
+    {
+        glm::vec4 axis = glm::vec4(1,0,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis) * 0.6f);
+        mGimble->Translate(glm::vec3(axis.x, axis.y, axis.z));
+    }
+    if(mKeysDown['s'] == 1)
+    {
+        glm::vec4 axis = glm::vec4(0,0,-1,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis) * 0.6f);
+        mGimble->Translate(glm::vec3(axis.x, axis.y, axis.z));
+    }
+    if(mKeysDown['d'] == 1)
+    {
+        glm::vec4 axis = glm::vec4(-1,0,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis) * 0.6f);
+        mGimble->Translate(glm::vec3(axis.x, axis.y, axis.z));
+    }
+    if(mKeysDown['x'] == 1)
+    {
+        glm::vec4 axis = glm::vec4(0,-1,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis) * 0.6f);
+        mGimble->Translate(glm::vec3(axis.x, axis.y, axis.z));
+    }
+    if(mKeysDown['z'] == 1)
+    {
+        glm::vec4 axis = glm::vec4(0,1,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis) * 0.6f);
+        mGimble->Translate(glm::vec3(axis.x, axis.y, axis.z));
+    }
+    if(mKeysDown['q'] == 1)
+    {
+        glm::vec4 axis = glm::vec4(0,0,1,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis));
+        mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
+    }
+    if(mKeysDown['e'] == 1)
+    {
+        glm::vec4 axis = glm::vec4(0,0,-1,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis));
+        mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
+    }
+    if(mKeysDown[80] == 1) // left
+    {
+        glm::vec4 axis = glm::vec4(0,1,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis));
+        mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
+    }
+    if(mKeysDown[82] == 1) // up
+    {
+        glm::vec4 axis = glm::vec4(1,0,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis));
+        mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
+    }
+    if(mKeysDown[79] == 1) // right
+    {
+        glm::vec4 axis = glm::vec4(0,-1,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis));
+        mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
+    }
+    if(mKeysDown[81] == 1) // down
+    {
+        glm::vec4 axis = glm::vec4(-1,0,0,1);
+        axis = glm::transpose(mRootNode->GetGlobalTransform()) * axis;
+        axis = (glm::normalize(axis));
+        mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
 
-    mRootNode->Update();
+
+    timestep++;
+    if(timestep % 2 == 0)
+    {
+//        CreateRandomObject();
+    }
+
     mPhysics.Update(1.0f/mEngine->GetUpdateFrequency());
+    mRootNode->Update();
 
 }
 
 void DebugState::Draw(float delta)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     mRootNode->Draw(delta);
 
 }
 
 void DebugState::ProcessEvent(SDL_Event* event)
 {
+    switch(event->type)
+    {
+    case SDL_KEYDOWN:
+        std::cout << "key: " << event->key.keysym.sym%256 << std::endl;
+        std::cout.flush();
+        mKeysDown[event->key.keysym.sym%256] = true;
+        break;
+    case SDL_KEYUP:
 
+        mKeysDown[event->key.keysym.sym%256] = false;
+
+        break;
+    default:
+        break;
+    }
 }
 
 void DebugState::CreateRandomObject()
@@ -168,10 +296,11 @@ void DebugState::CreateRandomObject()
     float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     mat1->SetDiffuse(r,g,b);
+    mat1->SetSpecular(3,3,3);
+    mat1->SetShininess(200);
+    int random = rand();
 
-    int random = 1;//rand() % 2;
-
-    if(random)
+    if(random % 2 == 0)
     {
         float x = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 5;
         float y = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 5 + 10;
@@ -179,7 +308,6 @@ void DebugState::CreateRandomObject()
         float l = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
         float w = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
         float h = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-
 
 
         physx::PxMaterial* physxmat = mPhysics.GetPhysics()->createMaterial(.1,.1,.1);
@@ -204,29 +332,26 @@ void DebugState::CreateRandomObject()
         float x = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 5;
         float y = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 5 + 10;
         float z = static_cast <float> (rand()) / static_cast <float> (RAND_MAX) * 5 - 20;
-        float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+        float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX)/2;
 
 
 
         physx::PxMaterial* physxmat = mPhysics.GetPhysics()->createMaterial(.1,.1,.1);
 
         SceneObjectNode* node1 = new SceneObjectNode();
-        Engine3d::ModelMesh<Engine3d::SimpleVertex>* mesh1 = Engine3d::Primitives::MakeSphere(r,15,7);
+        Engine3d::ModelMesh<Engine3d::SimpleVertex>* mesh1 = Engine3d::Primitives::MakeSphere(r,20,10);
         mesh1->SetShader(mEngine->GetShader());
         mesh1->AddAsset(mat1);
         Engine3d::Model* model1 = new Model("box1");
         model1->AddMesh(mesh1);
         Engine3d::DrawInterface* drawmodel1 = new Engine3d::DrawModel(model1);
         node1->AddDrawInterface(drawmodel1);
+        node1->Translate(glm::vec3(x,y,z));
         mGimble->AddChild(node1);
-        physx::PxShape* geobox = mPhysics.GetPhysics()->createShape(physx::PxSphereGeometry(r), *physxmat);
-        physx::PxRigidDynamic* boxbody = mPhysics.GetPhysics()->createRigidDynamic(physx::PxTransform(x,y,z));
-        boxbody->attachShape(*geobox);
-        physx::PxRigidBodyExt::updateMassAndInertia(*boxbody, 100.0f);
-        //node1->SetBounds(boxbody);
         char name[50];
         sprintf(name, "sphere%d", count);
-        //mPhysics.AddPhysicsObject(name, node1);
+        PhysicsCallback* physicssphere = new PhysicsCallback(name, node1, mesh1);
+        physicssphere->Initialize(&mPhysics);
     }
     count++;
     std::cout << count << std::endl;

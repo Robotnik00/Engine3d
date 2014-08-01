@@ -55,4 +55,6 @@ protected:
 
     bool mKeysDown[256];
 
+    Engine3d::UniformMat4* mCameraTransform;
+
 };

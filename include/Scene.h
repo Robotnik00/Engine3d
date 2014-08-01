@@ -19,6 +19,27 @@ namespace Engine3d
         virtual void Draw(glm::mat4* interpolator) = 0;
     };
 
+    class CameraLocationUpdater : public DrawInterface
+    {
+    public:
+
+        CameraLocationUpdater(GLuint programid)
+        {
+            mCameraLocationUpdater = new Engine3d::UniformMat4("cameratransform", programid);
+
+        }
+
+        virtual void Draw(glm::mat4 *interpolator)
+        {
+            mCameraLocationUpdater->SetVal(*interpolator);
+            mCameraLocationUpdater->Bind();
+
+        }
+
+    protected:
+        UniformMat4* mCameraLocationUpdater;
+    };
+
     class DrawModel : public DrawInterface
     {
     public:
@@ -85,9 +106,10 @@ namespace Engine3d
         SceneObjectNode* GetParent() { return mParent; }
 
 
+        glm::mat4 GetGlobalInterpolator();
+
     protected:
         glm::mat4 GetPrevGlobalTransform();
-        glm::mat4 GetGlobalInterpolator();
 
 
 

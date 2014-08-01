@@ -83,8 +83,6 @@ void PhysicsEngine::Update(float dt)
             {
                 physx::PxMat44 mat(actor->getGlobalPose());
                 mPhysicsObjects[actor->getName()]->UpdateTransform(*((glm::mat4*)&mat));
-                std::cout << "hey\n";
-                std::cout.flush();
             }
         }
     }

@@ -30,16 +30,19 @@ struct MaterialParameters
 uniform sampler2D Tex1;
 uniform MaterialParameters material;
 uniform LightParameters light1;
-
-uniform mat4 cameraposition = mat4(1);
+uniform mat4 cameratransform;
 
 void main (void)  
 {  
   float attenuation = 1;
- 
-  vec3 lightdir = normalize(light1.position - vertex);
 
-  vec3 distVec = light1.position - vertex;
+  vec4 glbcamtran = cameratransform * vec4(light1.position, 1);
+  vec3 glbcam = glbcamtran.xyz;
+//  vec3 glbcamtran = (cameratransform * vec4(light1.position,1)).xyz
+
+  vec3 lightdir = normalize(glbcam - vertex);
+
+  vec3 distVec = glbcam - vertex;
   float distance = length(distVec);
   
   attenuation = 1/(light1.constantAttenuation 
