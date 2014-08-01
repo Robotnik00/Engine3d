@@ -40,7 +40,7 @@ using namespace Engine3d;
 DebugState::DebugState(Engine* engine)
     : State(engine)
 {
-    mEngine->SetUpdateFrequency(20.0f);
+    mEngine->SetUpdateFrequency(30.0f);
     count = 0;
     if(mPhysics.Initialize())
     {
@@ -238,6 +238,10 @@ void DebugState::Update()
         mRootNode->Rotate(-3.0, glm::vec3(axis.x,axis.y,axis.z));
     }
 
+    if(glm::length(mRotAxis) > 1.0 && mMouseDown == true)
+    {
+        mRootNode->Rotate(glm::length(mRotAxis), glm::normalize(mRotAxis));
+    }
 
     timestep++;
     if(timestep % 10 == 0)
@@ -269,6 +273,29 @@ void DebugState::ProcessEvent(SDL_Event* event)
         mKeysDown[event->key.keysym.sym%256] = false;
 
         break;
+    case SDL_MOUSEMOTION:
+    {
+        mRotAxis = glm::vec3(event->motion.x - mEngine->GetWidth()/2,
+                                      -1 * (event->motion.y - mEngine->GetHeight()/2), 0);
+        mRotAxis = glm::cross(mRotAxis, glm::vec3(0,0,-1));
+
+        mRotAxis.x = mRotAxis.x * 0.01;
+        mRotAxis.y = mRotAxis.y * 0.01;
+        mRotAxis.z = mRotAxis.z * 0.01;
+
+        std::cout << mRotAxis.x << ' ' << mRotAxis.y << ' ' << mRotAxis.z << "   " << glm::length(mRotAxis) << "\n";
+        std::cout.flush();
+
+        break;
+    }
+    case SDL_MOUSEBUTTONDOWN:
+        mMouseDown = true;
+        break;
+    case SDL_MOUSEBUTTONUP:
+        mMouseDown = false;
+        break;
+
+
     default:
         break;
     }

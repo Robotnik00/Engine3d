@@ -40,7 +40,7 @@ Engine::Engine(int width, int height)
 	mHeight			= height;
 	mTime			= 0;
 	mFPS			= 0.0f;
-    mMaxFPS         = 120.0f;
+    mMaxFPS         = 60.0f;
 	mUpdateFrequency	= 25;
 	mIsRunning		= false;
 	mCurrentState 		= NULL;
@@ -50,16 +50,16 @@ Engine::Engine(int width, int height)
 	mDrawFrames		= 0;
 	mTicks 			= 0;
 	// initialize video
-	SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_Init(SDL_INIT_EVERYTHING);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     mWindow = SDL_CreateWindow("",  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
-	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+    mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
 	glViewport(0, 0, (GLsizei)GetWidth(), (GLsizei)GetHeight());
 	glMatrixMode(GL_PROJECTION); 
 	glLoadIdentity();
 	gluPerspective(60, (GLfloat)GetWidth() / (GLfloat)GetHeight(), 0.1, 100.0); 
 	glMatrixMode(GL_MODELVIEW);
     glEnable (GL_DEPTH_TEST);
-
     char arg1[] = "VertexPosition";
     char arg2[] = "Normal";
     char arg3[] = "TexCoords";
@@ -181,9 +181,11 @@ void Engine::Loop()
 		{
 			delta = ((float)(SDL_GetTicks() - lastUpdate) * mUpdateFrequency) / 1000.0f;
 			mCurrentState->Draw(delta);
+
             last_draw = SDL_GetTicks();
 
             Display();
+            glFinish();
             mDrawFrames++;
         }
         mTicks++;
@@ -215,7 +217,7 @@ void Engine::ProcessEvents()
 
 void Engine::Display()
 {		   
-        SDL_RenderPresent(mRenderer);	
+    SDL_RenderPresent(mRenderer);
 }
 
 

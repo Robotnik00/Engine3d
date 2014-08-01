@@ -55,6 +55,8 @@ protected:
 
     bool mKeysDown[256];
 
+    glm::vec3 mRotAxis;
+    bool mMouseDown;
     Engine3d::UniformMat4* mCameraTransform;
 
 };
